@@ -118,7 +118,7 @@ export const venteService = {
     });
     return data;
   },
-  getAll: async (filters?: { creatriceId?: string; modePaiement?: string; evenementId?: string; boutiqueId?: string }) => {
+  getAll: async (filters?: { creatriceId?: string; modePaiement?: string; evenementId?: string; boutiqueId?: string; mode?: "GERANTE" | "CREATRICE" }) => {
     const { data } = await api.get("/vente", { params: filters });
     return data;
   },

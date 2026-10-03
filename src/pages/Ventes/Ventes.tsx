@@ -28,14 +28,18 @@ export default function Ventes() {
   const [editing, setEditing] = useState<Vente | null>(null);
 
   const canSell = gerante || !!activeEvenementId;
+  const currentMode: "GERANTE" | "CREATRICE" = gerante ? "GERANTE" : "CREATRICE";
 
   const queryFilters = {
     ...(filter !== "TOUT" ? { modePaiement: filter } : {}),
     ...(activeEvenementId ? { evenementId: activeEvenementId } : {}),
+    mode: currentMode,
   };
 
+  // currentMode dans la clé : sans ça, la bascule DUO ne redéclenche pas le
+  // fetch et affiche la liste de l'autre vue (bug repéré en testant le site).
   const { data: ventes, isLoading } = useQuery<Vente[]>({
-    queryKey: ["ventes", filter, activeEvenementId ?? "personal"],
+    queryKey: ["ventes", filter, activeEvenementId ?? "personal", currentMode],
     queryFn: () => venteService.getAll(queryFilters),
   });
 
