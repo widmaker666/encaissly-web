@@ -1,0 +1,74 @@
+.page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: var(--size-xxl);
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  text-align: center;
+  margin: 8px 0 24px;
+  font-size: var(--size-sm);
+}
+
+.label {
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  margin-bottom: 6px;
+}
+
+.input {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.input:focus {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 1px;
+}
+
+.error {
+  color: var(--color-error);
+  font-size: var(--size-sm);
+  margin: -8px 0 16px;
+}
+
+.submit {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: var(--font-bold);
+  cursor: pointer;
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.submit:not(:disabled):hover {
+  background: var(--color-primary-dark);
+}

@@ -1,0 +1,115 @@
+.shell {
+  display: flex;
+  min-height: 100%;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  color: var(--color-primary);
+  font-size: var(--size-xl);
+  margin-bottom: 32px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.navLink {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--color-text);
+  font-family: var(--font-medium);
+}
+
+.navLink:hover {
+  background: var(--color-background);
+}
+
+.navLinkActive {
+  background: var(--color-primary);
+  color: white;
+}
+
+.footer {
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+}
+
+.user {
+  font-size: var(--size-sm);
+  color: var(--color-text-light);
+  margin: 0 0 8px;
+}
+
+.logoutBtn {
+  width: 100%;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--color-error);
+}
+
+.logoutBtn:hover {
+  background: var(--color-background);
+}
+
+.content {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* Mobile-first : le menu latéral passe en barre du haut sous 760px — les
+   testeuses iPhone doivent pouvoir utiliser le site, pas juste le consulter. */
+@media (max-width: 760px) {
+  .shell {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 16px;
+    overflow-x: auto;
+  }
+
+  .logo {
+    margin-bottom: 0;
+    font-size: var(--size-lg);
+  }
+
+  .nav {
+    flex-direction: row;
+  }
+
+  .footer {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .user {
+    display: none;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}

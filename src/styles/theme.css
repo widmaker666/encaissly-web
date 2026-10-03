@@ -1,0 +1,112 @@
+/* Couleurs et polices — copié de encaissly-mobile/constants/colors.ts et
+   constants/fonts.ts, mêmes valeurs des deux côtés.
+
+   Note fonts : on ne charge QUE les polices réellement utilisées sur mobile.
+   `norwester.otf` et `Now-Black.otf` existent dans les assets mais ne sont
+   jamais référencés dans le code (constants/fonts.ts fait pointer "norwester"
+   vers Urbanist) — on ne les a pas copiés ici. Servies en .otf/.ttf pour
+   l'instant (pas de conversion .woff2) ; à revoir si la taille pèse un jour,
+   c'est une appli derrière connexion, pas une page publique sensible au poids. */
+
+@font-face {
+  font-family: "Urbanist";
+  src: url("/fonts/Urbanist-VariableFont_wght.ttf") format("truetype-variations");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Now-Thin";
+  src: url("/fonts/Now-Thin.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Now-Light";
+  src: url("/fonts/Now-Light.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Now-Regular";
+  src: url("/fonts/Now-Regular.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Now-Medium";
+  src: url("/fonts/Now-Medium.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Now-Bold";
+  src: url("/fonts/Now-Bold.otf") format("opentype");
+  font-display: swap;
+}
+
+:root {
+  --color-primary: #7a41bb;
+  --color-primary-light: #b98ae0;
+  --color-primary-dark: #5a2e8a;
+  --color-background: #eaddcd;
+  --color-surface: #ffffff;
+  --color-text: #2d3436;
+  --color-text-light: #7a7a7a;
+  --color-border: #dfe6e9;
+  --color-success: #00b894;
+  --color-error: #d63031;
+  --color-warning: #fdcb6e;
+
+  --font-title: "Urbanist", sans-serif;
+  --font-thin: "Now-Thin", sans-serif;
+  --font-light: "Now-Light", sans-serif;
+  --font-regular: "Now-Regular", sans-serif;
+  --font-medium: "Now-Medium", sans-serif;
+  --font-bold: "Now-Bold", sans-serif;
+
+  --size-xs: 12px;
+  --size-sm: 14px;
+  --size-md: 16px;
+  --size-lg: 20px;
+  --size-xl: 28px;
+  --size-xxl: 40px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-regular);
+  font-size: var(--size-md);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  font-weight: 800;
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+a {
+  color: inherit;
+}
