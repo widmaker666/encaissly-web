@@ -1,0 +1,181 @@
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-family: var(--font-medium);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-bold);
+  font-size: var(--size-lg);
+  flex-shrink: 0;
+}
+
+.commissionBadge {
+  display: inline-block;
+  margin-top: 4px;
+  background: var(--color-background);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: var(--size-xs);
+  font-family: var(--font-medium);
+  color: var(--color-text-light);
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.editBtn,
+.deleteBtn {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-family: var(--font-medium);
+  cursor: pointer;
+}
+
+.deleteBtn {
+  color: var(--color-error);
+}
+
+.editBtn:hover {
+  background: var(--color-background);
+}
+
+.deleteBtn:hover {
+  background: #fdeaea;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.statValue {
+  font-family: var(--font-bold);
+  font-size: var(--size-lg);
+  color: var(--color-primary);
+}
+
+.statLabel {
+  font-size: var(--size-xs);
+  color: var(--color-text-light);
+  margin-top: 2px;
+}
+
+.sectionTitle {
+  font-size: var(--size-md);
+  margin: 24px 0 12px;
+}
+
+.notice {
+  color: var(--color-text-light);
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table th {
+  text-align: left;
+  font-family: var(--font-bold);
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-light);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--size-sm);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.badgeEspeces,
+.badgeCarte {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: var(--font-bold);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+.badgeEspeces {
+  background: #e0f7ef;
+  color: #00b894;
+}
+
+.badgeCarte {
+  background: #e0edff;
+  color: #4267b2;
+}
+
+@media (max-width: 600px) {
+  .table thead {
+    display: none;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+
+  .table td {
+    border: none;
+    padding: 2px 0;
+  }
+}
