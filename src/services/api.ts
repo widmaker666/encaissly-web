@@ -1,12 +1,12 @@
 // Copié de encaissly-mobile/services/api.ts, nettoyé :
 // - la connexion Google native (GoogleSignin) n'a pas de sens dans un
-//   navigateur — remplacée plus tard (étape 3) par Google Identity Services,
+//   navigateur — remplacée par Google Identity Services (voir lib/google.ts),
 //   mais `authService.googleMobile` reste tel quel : c'est le backend qui ne
 //   change pas, seule la façon d'obtenir l'idToken diffère.
 // - import.meta.env.VITE_* au lieu de process.env.EXPO_PUBLIC_*
-// - TODO étape 1 : renouvellement automatique du token sur 401 via
-//   POST /auth/refresh (le mobile se contente de déconnecter, le web peut
-//   faire mieux puisque la session est censée survivre au rafraîchissement)
+// - renouvellement automatique du token sur 401 via POST /auth/refresh : le
+//   mobile se contente de déconnecter, le web peut faire mieux puisque la
+//   session est censée survivre au rafraîchissement de la page (persist).
 
 import axios from "axios";
 import { useAuthStore } from "@/stores/auth.store";
@@ -30,11 +30,47 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-//- Gère les 401 globalement (token expiré)
+//- Un seul appel à /auth/refresh même si plusieurs requêtes échouent en 401
+//- en même temps (ex: plusieurs useQuery qui partent ensemble) — sans ça,
+//- chacune déclencherait son propre refresh et invaliderait celui des autres.
+let refreshPromise: Promise<string> | null = null;
+
+function refreshAccessToken(): Promise<string> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const refreshToken = useAuthStore.getState().refreshToken;
+      if (!refreshToken) throw new Error("Pas de refresh token");
+      // Instance à part (pas `api`) pour ne pas repasser par ces mêmes
+      // intercepteurs et éviter une boucle si /auth/refresh répond aussi 401.
+      const { data } = await axios.post<{ accessToken: string }>(`${API_BASE_URL}/auth/refresh`, { refreshToken });
+      useAuthStore.getState().setTokens(data.accessToken, refreshToken);
+      return data.accessToken;
+    })().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
+//- Gère les 401 globalement : tente un renouvellement puis rejoue la requête
+//- d'origine une seule fois (`_retry`) ; si ça échoue aussi, déconnexion.
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
+  async (error) => {
+    const original = error.config;
+    const isAuthRoute = original?.url?.startsWith("/auth/");
+    if (error.response?.status === 401 && !original?._retry && !isAuthRoute) {
+      original._retry = true;
+      try {
+        const newToken = await refreshAccessToken();
+        original.headers.Authorization = `Bearer ${newToken}`;
+        return api(original);
+      } catch {
+        useAuthStore.getState().logout();
+        return Promise.reject(error);
+      }
+    }
+    if (error.response?.status === 401 && isAuthRoute) {
       useAuthStore.getState().logout();
     }
     return Promise.reject(error);

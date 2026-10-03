@@ -2,6 +2,8 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import { useAuthStore } from "@/stores/auth.store";
 import AppLayout from "@/layouts/AppLayout";
 import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import Legal from "@/pages/Legal";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import Ventes from "@/pages/Ventes/Ventes";
 import Creatrices from "@/pages/Creatrices/Creatrices";
@@ -25,8 +27,12 @@ function RedirectIfAuth() {
 export const router = createBrowserRouter([
   {
     element: <RedirectIfAuth />,
-    children: [{ path: "/login", element: <Login /> }],
+    children: [
+      { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register /> },
+    ],
   },
+  { path: "/legal", element: <Legal /> },
   {
     element: <RequireAuth />,
     children: [

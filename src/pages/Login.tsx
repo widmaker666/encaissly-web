@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { authService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { getErrorMessage } from "@/lib/errors";
@@ -132,6 +132,10 @@ export default function Login() {
             {googleLoading && <p className={styles.hint}>Connexion…</p>}
           </>
         )}
+
+        <p className={styles.footer}>
+          Pas de compte ? <Link to="/register">S'inscrire</Link>
+        </p>
       </div>
     </div>
   );

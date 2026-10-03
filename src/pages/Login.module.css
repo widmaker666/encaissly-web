@@ -106,3 +106,15 @@
   font-size: var(--size-sm);
   margin: 8px 0 0;
 }
+
+.footer {
+  text-align: center;
+  font-size: var(--size-sm);
+  color: var(--color-text-light);
+  margin: 20px 0 0;
+}
+
+.footer a {
+  color: var(--color-primary);
+  font-family: var(--font-medium);
+}

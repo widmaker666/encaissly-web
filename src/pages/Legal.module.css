@@ -1,0 +1,56 @@
+.page {
+  min-height: 100%;
+}
+
+.header {
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.headerTitle {
+  color: white;
+  font-size: var(--size-md);
+  letter-spacing: 0.02em;
+}
+
+.content {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+.lastUpdate {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-bottom: 20px;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: var(--size-sm);
+  margin: 0 0 6px;
+}
+
+.sectionBody {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  line-height: 1.5;
+  white-space: pre-line;
+  margin: 0;
+}
