@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { boutiqueService, venteService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
@@ -18,6 +19,7 @@ interface BoutiqueAvecStats {
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const duoMode = useAuthStore((s) => s.duoMode);
@@ -136,16 +138,18 @@ export default function Dashboard() {
       ) : (
         <div className={styles.boutiquesGrid}>
           {liste.map((b) => (
-            <div key={b.id} className={styles.boutiqueCard}>
+            <button
+              key={b.id}
+              type="button"
+              className={styles.boutiqueCard}
+              onClick={() => navigate(`/boutiques/${b.id}?nom=${encodeURIComponent(b.nom)}`)}
+            >
               <div className={styles.boutiqueNom}>{b.nom}</div>
               <div className={styles.boutiqueMeta}>
                 {b.nbCreatrices} créatrice{b.nbCreatrices !== 1 ? "s" : ""} · {formatMontant(b.ca)}
               </div>
-            </div>
+            </button>
           ))}
-          <p className={styles.notice} style={{ gridColumn: "1 / -1" }}>
-            Fiche boutique détaillée : arrive à l'étape 2 sur le web.
-          </p>
         </div>
       )}
 

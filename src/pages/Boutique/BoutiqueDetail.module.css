@@ -1,0 +1,57 @@
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-family: var(--font-medium);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: -4px 0 0;
+}
+
+.sectionTitle {
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  margin: 24px 0 10px;
+}
+
+.notice {
+  color: var(--color-text-light);
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 480px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  max-width: 640px;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.statValue {
+  font-family: var(--font-title);
+  font-weight: 800;
+  color: var(--color-primary);
+  font-size: var(--size-lg);
+}
+
+.statLabel {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-top: 2px;
+}

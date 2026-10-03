@@ -10,6 +10,7 @@ import Creatrices from "@/pages/Creatrices/Creatrices";
 import CreatriceDetail from "@/pages/Creatrices/CreatriceDetail";
 import Stats from "@/pages/Stats/Stats";
 import Profil from "@/pages/Profil/Profil";
+import BoutiqueDetail from "@/pages/Boutique/BoutiqueDetail";
 
 /** Les routes `(app)` du mobile — redirige vers /login si pas de session. */
 function RequireAuth() {
@@ -46,6 +47,7 @@ export const router = createBrowserRouter([
           { path: "/creatrices/:id", element: <CreatriceDetail /> },
           { path: "/stats", element: <Stats /> },
           { path: "/profil", element: <Profil /> },
+          { path: "/boutiques/:id", element: <BoutiqueDetail /> },
         ],
       },
     ],
