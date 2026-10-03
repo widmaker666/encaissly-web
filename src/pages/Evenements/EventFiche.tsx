@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { articleService, statsService, venteService } from "@/services/api";
+import { articleService, evenementService, statsService, venteService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { formatMontant } from "@/lib/money";
 import { formatDate } from "@/lib/date";
@@ -33,8 +33,10 @@ export default function EventFiche() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Article | null>(null);
+  const [confirmDeleteEvent, setConfirmDeleteEvent] = useState(false);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [deleteEventError, setDeleteEventError] = useState<string | null>(null);
 
   // Rend cet événement "actif" app-wide (Ventes, Stats... en dépendent) dès
   // qu'on arrive sur sa fiche — y compris en arrivant directement par l'URL.
@@ -104,6 +106,19 @@ export default function EventFiche() {
     navigate("/profil");
   }
 
+  const { mutate: removeEvenement, isPending: deletingEvent } = useMutation({
+    mutationFn: () => evenementService.remove(evenementId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mes-evenements"] });
+      setActiveEvenement(null, null);
+      navigate("/profil");
+    },
+    onError: (err) => {
+      setDeleteEventError(getErrorMessage(err, "Impossible de supprimer l'événement."));
+      setConfirmDeleteEvent(false);
+    },
+  });
+
   const ca: number = stats?.stats?._sum?.prixVente ?? 0;
   const nbVentes: number = stats?.stats?._count ?? 0;
   const commissions: number = stats?.totalCommissions ?? 0;
@@ -115,10 +130,17 @@ export default function EventFiche() {
           <h2>{nomEvenement}</h2>
           <p className={styles.subtitle}>Ma fiche événement</p>
         </div>
-        <button type="button" className={styles.quitterBtn} onClick={handleQuitter}>
-          Quitter cet événement
-        </button>
+        <div className={styles.headerActions}>
+          <button type="button" className={styles.quitterBtn} onClick={handleQuitter}>
+            Quitter cet événement
+          </button>
+          <button type="button" className={styles.deleteEventBtn} onClick={() => setConfirmDeleteEvent(true)}>
+            Supprimer cet événement
+          </button>
+        </div>
       </div>
+
+      {deleteEventError && <p className={styles.errorBanner}>{deleteEventError}</p>}
 
       <h3 className={styles.sectionTitle}>Statistiques</h3>
       <div className={styles.statsGrid}>
@@ -219,6 +241,24 @@ export default function EventFiche() {
         pending={deleting}
         onConfirm={() => toDelete && removeArticle(toDelete.id)}
         onCancel={() => setToDelete(null)}
+      />
+
+      {/* Suppression de l'événement — avertissement explicite : la base
+          supprime ses ventes ET ses articles en cascade, ce n'est pas juste
+          "l'événement devient inaccessible". */}
+      <ConfirmDialog
+        open={confirmDeleteEvent}
+        title="Supprimer cet événement"
+        message={
+          nbVentes > 0
+            ? `Cet événement contient ${nbVentes} vente${nbVentes > 1 ? "s" : ""} pour ${formatMontant(ca)}. Les supprimer définitivement, avec tous les articles de cet événement ? Cette action est irréversible.`
+            : `Supprimer "${nomEvenement}" et tous ses articles ? Cette action est irréversible.`
+        }
+        confirmLabel="Supprimer définitivement"
+        danger
+        pending={deletingEvent}
+        onConfirm={() => removeEvenement()}
+        onCancel={() => setConfirmDeleteEvent(false)}
       />
     </div>
   );

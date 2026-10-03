@@ -13,20 +13,38 @@
   margin: 2px 0 0;
 }
 
-.quitterBtn {
+.headerActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quitterBtn,
+.deleteEventBtn {
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   border-radius: 10px;
   padding: 8px 14px;
   font-family: var(--font-medium);
   font-size: var(--size-sm);
-  color: var(--color-text-light);
   cursor: pointer;
   white-space: nowrap;
 }
 
+.quitterBtn {
+  color: var(--color-text-light);
+}
+
 .quitterBtn:hover {
   background: var(--color-background);
+}
+
+.deleteEventBtn {
+  color: var(--color-error);
+}
+
+.deleteEventBtn:hover {
+  background: #fdeaea;
 }
 
 .sectionTitle {
