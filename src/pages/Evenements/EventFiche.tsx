@@ -57,13 +57,19 @@ export default function EventFiche() {
 
   const { data: stats } = useQuery({
     queryKey: ["stats", evenementId],
-    queryFn: () => statsService.getGlobal({ evenementId }),
+    // mode: "CREATRICE" toujours ici, même si le compte est DUO et affiche
+    // "Gérante" ailleurs — cette fiche est intrinsèquement la vue perso de la
+    // créatrice. Sans ça, le backend résout un compte GERANTE_CREATRICE comme
+    // gérante par défaut et renvoie les stats de SA BOUTIQUE au lieu de
+    // celles de l'événement (repéré en test réel : mêmes chiffres que la
+    // fiche boutique réelle, alors que l'événement était vide).
+    queryFn: () => statsService.getGlobal({ evenementId, mode: "CREATRICE" }),
     enabled: !!evenementId,
   });
 
   const { data: recentVentes = [] } = useQuery<Vente[]>({
     queryKey: ["ventes", "fiche", evenementId],
-    queryFn: () => venteService.getAll({ evenementId }),
+    queryFn: () => venteService.getAll({ evenementId, mode: "CREATRICE" }),
     enabled: !!evenementId,
   });
 
