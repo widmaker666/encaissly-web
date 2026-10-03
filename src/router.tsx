@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import { useAuthStore } from "@/stores/auth.store";
 import AppLayout from "@/layouts/AppLayout";
 import Login from "@/pages/Login";
+import Dashboard from "@/pages/Dashboard/Dashboard";
 import Ventes from "@/pages/Ventes/Ventes";
 import Creatrices from "@/pages/Creatrices/Creatrices";
 import CreatriceDetail from "@/pages/Creatrices/CreatriceDetail";
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
-          { path: "/", element: <ComingSoon label="Tableau de bord" /> },
+          { path: "/", element: <Dashboard /> },
           { path: "/ventes", element: <Ventes /> },
           { path: "/creatrices", element: <Creatrices /> },
           { path: "/creatrices/:id", element: <CreatriceDetail /> },

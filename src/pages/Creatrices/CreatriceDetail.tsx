@@ -7,6 +7,7 @@ import { formatMontant } from "@/lib/money";
 import { formatDateLong } from "@/lib/date";
 import type { CreatriceDetail as CreatriceDetailType, VenteDetail } from "@/types";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import VentesExportButtons from "@/components/VentesExportButtons";
 import CreatriceFormModal from "./CreatriceFormModal";
 import styles from "./CreatriceDetail.module.css";
 
@@ -100,8 +101,14 @@ export default function CreatriceDetail() {
       </div>
 
       <p className={styles.notice} style={{ marginTop: 16 }}>
-        Catalogue d'articles et export des ventes par mois arrivent à l'étape 2 sur le web.
+        Catalogue d'articles : arrive à l'étape 2 sur le web.
       </p>
+
+      <h3 className={styles.sectionTitle}>Récupérer ses ventes</h3>
+      <VentesExportButtons
+        creatriceId={creatrice.id}
+        filenameBase={`ventes-${creatrice.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+      />
 
       <h3 className={styles.sectionTitle}>Ventes ({creatrice.ventes.length})</h3>
       {creatrice.ventes.length === 0 ? (

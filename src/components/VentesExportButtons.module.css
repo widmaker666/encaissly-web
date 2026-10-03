@@ -1,0 +1,105 @@
+.card {
+  background: var(--color-surface);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(122, 65, 187, 0.08);
+}
+
+.intro {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.monthRow {
+  display: flex;
+  align-items: center;
+  background: #f6f0fb;
+  border-radius: 12px;
+  padding: 6px;
+  margin-bottom: 10px;
+}
+
+.chevron {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  background: none;
+  font-family: var(--font-bold);
+  font-size: 22px;
+  color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.chevron:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.chevron:not(:disabled):hover {
+  background: rgba(122, 65, 187, 0.08);
+}
+
+.monthCenter {
+  flex: 1;
+  text-align: center;
+}
+
+.monthLabel {
+  font-family: var(--font-bold);
+  font-size: var(--size-md);
+}
+
+.monthHint {
+  font-size: 11px;
+  color: var(--color-text-light);
+  margin-top: 1px;
+}
+
+.formatBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 4px;
+  border: none;
+  border-top: 1px solid #f0e8f8;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.formatBtnLocked {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.formatIcon {
+  font-size: 22px;
+}
+
+.formatText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.formatLabel {
+  font-family: var(--font-bold);
+  font-size: var(--size-sm);
+}
+
+.formatSub {
+  font-size: var(--size-xs);
+  color: var(--color-text-light);
+  margin-top: 1px;
+}
+
+.formatEnd {
+  font-family: var(--font-bold);
+  font-size: 18px;
+  color: var(--color-primary);
+}
