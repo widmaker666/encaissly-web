@@ -8,6 +8,7 @@ import Dashboard from "@/pages/Dashboard/Dashboard";
 import Ventes from "@/pages/Ventes/Ventes";
 import Creatrices from "@/pages/Creatrices/Creatrices";
 import CreatriceDetail from "@/pages/Creatrices/CreatriceDetail";
+import Stats from "@/pages/Stats/Stats";
 import ComingSoon from "@/pages/ComingSoon";
 
 /** Les routes `(app)` du mobile — redirige vers /login si pas de session. */
@@ -43,7 +44,7 @@ export const router = createBrowserRouter([
           { path: "/ventes", element: <Ventes /> },
           { path: "/creatrices", element: <Creatrices /> },
           { path: "/creatrices/:id", element: <CreatriceDetail /> },
-          { path: "/stats", element: <ComingSoon label="Stats" /> },
+          { path: "/stats", element: <Stats /> },
           { path: "/profil", element: <ComingSoon label="Profil" /> },
         ],
       },

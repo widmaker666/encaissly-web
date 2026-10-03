@@ -1,0 +1,293 @@
+.header {
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: 4px 0 10px;
+  text-transform: capitalize;
+}
+
+.pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.pill {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pillActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.sectionTitle {
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  margin: 24px 0 10px;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.kpiCard,
+.card {
+  background: var(--color-surface);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.kpiLabel {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-bottom: 6px;
+}
+
+.kpiValue {
+  font-family: var(--font-title);
+  font-weight: 800;
+  color: var(--color-primary);
+  font-size: var(--size-lg);
+}
+
+.kpiValueGreen {
+  font-family: var(--font-title);
+  font-weight: 800;
+  color: var(--color-success);
+  font-size: var(--size-lg);
+}
+
+.evolutionUp {
+  color: #16a34a;
+  font-family: var(--font-medium);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.evolutionDown {
+  color: #dc2626;
+  font-family: var(--font-medium);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.barRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.barLabelRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+}
+
+.barMontant {
+  font-family: var(--font-title);
+  color: var(--color-primary);
+}
+
+.articleMeta {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+}
+
+.barTrack {
+  height: 6px;
+  background: #e8d5f5;
+  border-radius: 3px;
+}
+
+.barFill {
+  height: 6px;
+  background: var(--color-primary);
+  border-radius: 3px;
+  min-width: 2px;
+}
+
+.lockedBox {
+  background: rgba(185, 138, 224, 0.1);
+  border: 1.5px dashed rgba(185, 138, 224, 0.4);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  max-width: 420px;
+}
+
+.lockedTitle {
+  color: var(--color-primary-dark);
+  font-family: var(--font-medium);
+  margin: 0 0 6px;
+}
+
+.lockedDesc {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: 0;
+}
+
+.notice {
+  color: var(--color-text-light);
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 420px;
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  height: 180px;
+  max-width: 420px;
+}
+
+.chartCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.chartValue {
+  font-size: var(--size-xs);
+  color: var(--color-primary);
+  font-family: var(--font-medium);
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.chartBar {
+  width: 100%;
+  background: var(--color-primary);
+  border-radius: 4px 4px 0 0;
+}
+
+.chartLabel {
+  font-size: var(--size-xs);
+  color: var(--color-text-light);
+  margin-top: 6px;
+  text-transform: capitalize;
+}
+
+.table {
+  width: 100%;
+  max-width: 560px;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table th {
+  text-align: right;
+  font-family: var(--font-medium);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-light);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th:first-child,
+.table td:first-child {
+  text-align: left;
+}
+
+.table td {
+  text-align: right;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--size-sm);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.tableNom {
+  font-family: var(--font-medium);
+}
+
+.tableNet {
+  color: var(--color-success);
+  font-family: var(--font-medium);
+}
+
+.exportRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f0e8f8;
+  padding: 12px 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.card .exportRow:last-child {
+  border-bottom: none;
+}
+
+.exportText {
+  display: flex;
+  flex-direction: column;
+}
+
+.exportLabel {
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+}
+
+.exportSub {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-top: 1px;
+}
+
+.exportRowLocked {
+  color: var(--color-text-light);
+}
+
+.exportLabelLocked {
+  font-size: var(--size-sm);
+}
+
+.exportBadge {
+  font-family: var(--font-medium);
+  font-size: 10px;
+  color: var(--color-primary);
+  background: rgba(185, 138, 224, 0.15);
+  padding: 3px 8px;
+  border-radius: 8px;
+}
