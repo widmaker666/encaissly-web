@@ -100,9 +100,14 @@ export default function CreatriceDetail() {
         </div>
       </div>
 
-      <p className={styles.notice} style={{ marginTop: 16 }}>
-        Catalogue d'articles : arrive à l'étape 2 sur le web.
-      </p>
+      <button
+        type="button"
+        className={styles.catalogueBtn}
+        style={{ marginTop: 16 }}
+        onClick={() => navigate(`/creatrices/${creatrice.id}/articles?nom=${encodeURIComponent(creatrice.nom)}`)}
+      >
+        Voir les articles ›
+      </button>
 
       <h3 className={styles.sectionTitle}>Récupérer ses ventes</h3>
       <VentesExportButtons

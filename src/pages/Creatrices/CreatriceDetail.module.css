@@ -106,6 +106,24 @@
   padding: 16px;
 }
 
+.catalogueBtn {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  background: var(--color-surface);
+  border: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  font-family: var(--font-medium);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.catalogueBtn:hover {
+  background: var(--color-background);
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
