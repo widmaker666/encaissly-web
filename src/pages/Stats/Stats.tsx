@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { boutiqueService, evenementService, statsService } from "@/services/api";
 import type { StatsParams } from "@/services/api";
@@ -52,6 +52,15 @@ export default function Stats() {
   const currentMode: "GERANTE" | "CREATRICE" = gerante ? "GERANTE" : "CREATRICE";
 
   const [filter, setFilter] = useState<Filter>({ type: "all" });
+
+  // La bascule DUO ne démonte pas la page : react-query garde en cache les
+  // événements (créatrice) ou boutiques (gérante) vus juste avant, même une
+  // fois `enabled` repassé à false. Sans ce reset, basculer gérante -> créatrice
+  // -> gérante laissait le filtre sur un événement qui n'a plus de sens côté
+  // gérante (repéré en test réel : pill 🎪 visible alors que "Gérante" est sélectionné).
+  useEffect(() => {
+    setFilter({ type: "all" });
+  }, [gerante]);
 
   const { data: mesEvenements } = useQuery<Evenement[]>({
     queryKey: ["mes-evenements-stats"],
@@ -119,7 +128,12 @@ export default function Stats() {
 
   const parCreatrice = parCreatriceData ?? [];
 
-  const hasPills = (mesBoutiques && mesBoutiques.length > 0) || (mesEvenements && mesEvenements.length > 0);
+  // Ne jamais afficher les boutiques en vue créatrice ni les événements en
+  // vue gérante, même si react-query a encore l'autre en cache (voir le
+  // useEffect plus haut) — le rôle actuel prime toujours sur les données.
+  const boutiquesAffichees = gerante ? (mesBoutiques ?? []) : [];
+  const evenementsAffiches = creatrice ? (mesEvenements ?? []) : [];
+  const hasPills = boutiquesAffichees.length > 0 || evenementsAffiches.length > 0;
 
   return (
     <div>
@@ -138,7 +152,7 @@ export default function Stats() {
           <button type="button" className={filter.type === "all" ? `${styles.pill} ${styles.pillActive}` : styles.pill} onClick={() => setFilter({ type: "all" })}>
             Tout
           </button>
-          {mesBoutiques?.map((b) => (
+          {boutiquesAffichees.map((b) => (
             <button
               key={b.id}
               type="button"
@@ -148,7 +162,7 @@ export default function Stats() {
               🏪 {b.nom}
             </button>
           ))}
-          {mesEvenements?.map((e) => (
+          {evenementsAffiches.map((e) => (
             <button
               key={e.id}
               type="button"
