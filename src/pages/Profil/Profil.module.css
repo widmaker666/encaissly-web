@@ -142,6 +142,25 @@
   gap: 12px;
 }
 
+.eventRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  font-size: var(--size-sm);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.eventRow:hover {
+  color: var(--color-primary);
+}
+
 .infoLabel {
   font-family: var(--font-medium);
   font-size: var(--size-sm);

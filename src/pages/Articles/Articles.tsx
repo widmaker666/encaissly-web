@@ -140,7 +140,8 @@ export default function Articles() {
           setFormOpen(false);
           setEditing(null);
         }}
-        creatriceId={creatriceId}
+        scope={{ creatriceId }}
+        invalidateKey={["articles", creatriceId]}
         article={editing}
       />
 

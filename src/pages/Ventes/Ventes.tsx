@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { venteService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
@@ -96,8 +97,7 @@ export default function Ventes() {
 
       {!canSell && (
         <p className={styles.notice}>
-          Aucun événement actif — active ou crée un événement depuis l'appli mobile pour l'instant (l'écran Événements
-          arrive à l'étape 2 sur le web), puis reviens ici pour vendre.
+          Aucun événement actif — crée ou ouvre un événement depuis ton <Link to="/profil">profil</Link>, puis reviens ici pour vendre.
         </p>
       )}
 

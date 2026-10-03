@@ -9,7 +9,10 @@ import styles from "../Ventes/VenteCreateModal.module.css"; // mêmes classes de
 interface Props {
   open: boolean;
   onClose: () => void;
-  creatriceId: string;
+  /** L'article appartient soit à une créatrice (catalogue), soit à un événement (stock) — jamais les deux. */
+  scope: { creatriceId: string } | { evenementId: string };
+  /** Clé de cache à invalider après création/modification (["articles", creatriceId] ou ["articles-event", evenementId]). */
+  invalidateKey: unknown[];
   /** Fournie = modification, absente = création. */
   article?: Article | null;
 }
@@ -23,7 +26,7 @@ interface FormState {
 
 const EMPTY: FormState = { nom: "", description: "", prix: "", quantite: "1" };
 
-export default function ArticleFormModal({ open, onClose, creatriceId, article }: Props) {
+export default function ArticleFormModal({ open, onClose, scope, invalidateKey, article }: Props) {
   const queryClient = useQueryClient();
   const isEdit = !!article;
 
@@ -46,10 +49,10 @@ export default function ArticleFormModal({ open, onClose, creatriceId, article }
   }, [open, article]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (dto: { nom: string; description?: string; prixIndicatif?: number; quantite?: number; creatriceId?: string }) =>
+    mutationFn: (dto: { nom: string; description?: string; prixIndicatif?: number; quantite?: number; creatriceId?: string; evenementId?: string }) =>
       isEdit ? articleService.update(article!.id, dto) : articleService.create(dto),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["articles", creatriceId] });
+      queryClient.invalidateQueries({ queryKey: invalidateKey });
       onClose();
     },
     onError: (err) => setError(getErrorMessage(err, isEdit ? "Impossible de modifier l'article." : "Impossible de créer l'article.")),
@@ -67,7 +70,7 @@ export default function ArticleFormModal({ open, onClose, creatriceId, article }
       description: form.description.trim() || undefined,
       prixIndicatif: form.prix ? parseFloat(form.prix.replace(",", ".")) : undefined,
       quantite: form.quantite ? parseInt(form.quantite, 10) : undefined,
-      ...(isEdit ? {} : { creatriceId }),
+      ...(isEdit ? {} : scope),
     });
   }
 

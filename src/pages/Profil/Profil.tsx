@@ -1,14 +1,21 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authService, stripeService, userService } from "@/services/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authService, boutiqueService, evenementService, stripeService, userService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { isDuo, isGerante } from "@/lib/access";
+import { isDuo, isGerante, isPro as checkIsPro } from "@/lib/access";
 import { formatDateLong } from "@/lib/date";
 import { getErrorMessage } from "@/lib/errors";
+import type { Boutique } from "@/types";
 import DuoModeToggle from "@/components/DuoModeToggle";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import styles from "./Profil.module.css";
+
+interface Evenement {
+  id: string;
+  nom: string;
+  dateDebut: string;
+}
 
 type BillingPeriod = "monthly" | "annual";
 
@@ -31,7 +38,48 @@ export default function Profil() {
   const [error, setError] = useState<string | null>(null);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [deleteStep, setDeleteStep] = useState<"none" | "first" | "second">("none");
+  const [creatingEvent, setCreatingEvent] = useState(false);
+  const [nomEvenement, setNomEvenement] = useState("");
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const setActiveEvenement = useAuthStore((s) => s.setActiveEvenement);
+
+  const pro = checkIsPro(user);
+
+  const { data: mesEvenements = [] } = useQuery<Evenement[]>({
+    queryKey: ["mes-evenements"],
+    queryFn: () => evenementService.getAll(),
+    enabled: !gerante,
+  });
+
+  const { data: mesBoutiques = [] } = useQuery<Boutique[]>({
+    queryKey: ["mes-boutiques"],
+    queryFn: () => boutiqueService.getMesBoutiques(),
+    enabled: !gerante,
+  });
+
+  //- DUO débloque les mêmes fonctionnalités que PRO
+  const canCreateEvent = pro || mesEvenements.length < 1;
+
+  const { mutate: creerEvenement, isPending: creatingEventPending } = useMutation({
+    mutationFn: () => evenementService.creerMonEvenement(nomEvenement.trim()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mes-evenements"] });
+      setCreatingEvent(false);
+      setNomEvenement("");
+    },
+    onError: () => setError("Impossible de créer l'événement."),
+  });
+
+  function handleCreerEvenement(e: FormEvent) {
+    e.preventDefault();
+    if (!nomEvenement.trim()) return;
+    creerEvenement();
+  }
+
+  function handleOuvrirEvenement(ev: Evenement) {
+    setActiveEvenement(ev.id, ev.nom);
+    navigate(`/evenements/${ev.id}?nom=${encodeURIComponent(ev.nom)}`);
+  }
 
   const { mutate: saveProfile, isPending: isSaving } = useMutation({
     mutationFn: () => userService.updateProfile({ nom: editNom || undefined, prenom: editPrenom || undefined }),
@@ -151,7 +199,76 @@ export default function Profil() {
       {!gerante && (
         <>
           <h3 className={styles.sectionTitle}>Mes événements</h3>
-          <p className={styles.notice}>La création d'événements arrive à l'étape 2 sur le web — pour l'instant, utilise l'appli mobile.</p>
+          <div className={styles.card}>
+            {mesEvenements.map((ev, i) => (
+              <div key={ev.id}>
+                {i > 0 && <div className={styles.divider} />}
+                <button type="button" className={styles.eventRow} onClick={() => handleOuvrirEvenement(ev)}>
+                  <span>🎪 {ev.nom}</span>
+                  <span className={styles.infoValue}>{new Date(ev.dateDebut).toLocaleDateString("fr-FR", { month: "short", year: "numeric" })}</span>
+                </button>
+              </div>
+            ))}
+
+            {mesBoutiques.length > 0 && (
+              <>
+                {mesEvenements.length > 0 && <div className={styles.divider} />}
+                {mesBoutiques.map((b, i) => (
+                  <div key={b.id}>
+                    {i > 0 && <div className={styles.divider} />}
+                    <div className={styles.infoRow}>
+                      <span className={styles.infoLabel}>Membre de</span>
+                      <span className={styles.infoValue}>{b.nom}</span>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+
+            {(mesEvenements.length > 0 || mesBoutiques.length > 0) && <div className={styles.divider} />}
+
+            {canCreateEvent ? (
+              creatingEvent ? (
+                <form onSubmit={handleCreerEvenement}>
+                  <label className={styles.infoLabel} htmlFor="nomEvenement">
+                    Nom de l'événement
+                  </label>
+                  <input
+                    id="nomEvenement"
+                    className={styles.editInput}
+                    style={{ textAlign: "left", width: "100%", marginTop: 6 }}
+                    value={nomEvenement}
+                    onChange={(e) => setNomEvenement(e.target.value)}
+                    placeholder="Ex : Marché de Noël 2026"
+                    autoFocus
+                  />
+                  <div className={styles.editActions}>
+                    <button
+                      type="button"
+                      className={styles.cancelBtn}
+                      onClick={() => {
+                        setCreatingEvent(false);
+                        setNomEvenement("");
+                      }}
+                    >
+                      Annuler
+                    </button>
+                    <button type="submit" className={styles.saveBtn} disabled={!nomEvenement.trim() || creatingEventPending}>
+                      {creatingEventPending ? "…" : "Créer"}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <button type="button" className={styles.editBtn} onClick={() => setCreatingEvent(true)}>
+                  + Créer un événement
+                </button>
+              )
+            ) : (
+              <p className={styles.notice} style={{ margin: 0 }}>
+                🔒 Plan FREE · 1 événement max. Passe à PRO pour en créer davantage.
+              </p>
+            )}
+          </div>
         </>
       )}
 

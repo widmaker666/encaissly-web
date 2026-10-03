@@ -1,0 +1,171 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: 2px 0 0;
+}
+
+.quitterBtn {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  color: var(--color-text-light);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.quitterBtn:hover {
+  background: var(--color-background);
+}
+
+.sectionTitle {
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  margin: 24px 0 10px;
+}
+
+.sectionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sectionActions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionBtn,
+.actionBtnPrimary {
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.actionBtn {
+  border: 1px solid var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+
+.actionBtnPrimary {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.successBanner {
+  background: #e6f7ef;
+  color: #1a7a4a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: var(--size-sm);
+  margin: 10px 0;
+}
+
+.errorBanner {
+  background: #fdeaea;
+  color: var(--color-error);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: var(--size-sm);
+  margin: 10px 0;
+}
+
+.notice {
+  color: var(--color-text-light);
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 480px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  max-width: 640px;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.statValue {
+  font-family: var(--font-title);
+  font-weight: 800;
+  color: var(--color-primary);
+  font-size: var(--size-lg);
+}
+
+.statLabel {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-top: 2px;
+}
+
+.articleList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 560px;
+}
+
+.articleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-surface);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.articleNom {
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+}
+
+.articleMeta {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-top: 2px;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--color-error);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.ventePrix {
+  font-family: var(--font-title);
+  font-weight: 800;
+  color: var(--color-primary);
+}
