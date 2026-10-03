@@ -1,0 +1,42 @@
+.message {
+  color: var(--color-text);
+  margin: 0 0 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel,
+.confirm,
+.danger {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: var(--font-bold);
+  cursor: pointer;
+}
+
+.cancel {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.confirm {
+  background: var(--color-primary);
+  color: white;
+}
+
+.danger {
+  background: var(--color-error);
+  color: white;
+}
+
+.cancel:disabled,
+.confirm:disabled,
+.danger:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

@@ -1,0 +1,23 @@
+.container {
+  display: inline-flex;
+  background: var(--color-background);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.btn {
+  border: none;
+  background: none;
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-family: var(--font-medium);
+  font-size: var(--size-xs);
+  color: var(--color-text-light);
+  cursor: pointer;
+}
+
+.btnActive {
+  background: var(--color-surface);
+  color: var(--color-primary);
+}

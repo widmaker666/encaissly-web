@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import { useAuthStore } from "@/stores/auth.store";
 import AppLayout from "@/layouts/AppLayout";
 import Login from "@/pages/Login";
+import Ventes from "@/pages/Ventes/Ventes";
 import ComingSoon from "@/pages/ComingSoon";
 
 /** Les routes `(app)` du mobile — redirige vers /login si pas de session. */
@@ -30,7 +31,7 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { path: "/", element: <ComingSoon label="Tableau de bord" /> },
-          { path: "/ventes", element: <ComingSoon label="Ventes" /> },
+          { path: "/ventes", element: <Ventes /> },
           { path: "/creatrices", element: <ComingSoon label="Créatrices" /> },
           { path: "/stats", element: <ComingSoon label="Stats" /> },
           { path: "/profil", element: <ComingSoon label="Profil" /> },

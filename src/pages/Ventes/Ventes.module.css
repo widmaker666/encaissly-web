@@ -1,0 +1,156 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: 4px 0 10px;
+}
+
+.addBtn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 18px;
+  font-family: var(--font-bold);
+  font-size: var(--size-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.addBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.addBtn:not(:disabled):hover {
+  background: var(--color-primary-dark);
+}
+
+.notice {
+  color: var(--color-text-light);
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  cursor: pointer;
+}
+
+.chipActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table th {
+  text-align: left;
+  font-family: var(--font-bold);
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-light);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.table th:hover {
+  color: var(--color-primary);
+}
+
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--size-sm);
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover {
+  background: var(--color-background);
+}
+
+.row:last-child td {
+  border-bottom: none;
+}
+
+.badgeEspeces,
+.badgeCarte {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: var(--font-bold);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+.badgeEspeces {
+  background: #e0f7ef;
+  color: #00b894;
+}
+
+.badgeCarte {
+  background: #e0edff;
+  color: #4267b2;
+}
+
+/* Mobile-first : la table devient illisible en dessous de 600px, on
+   repasse en cartes empilées plutôt que de forcer un scroll horizontal. */
+@media (max-width: 600px) {
+  .table thead {
+    display: none;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+
+  .table td {
+    border: none;
+    padding: 2px 0;
+  }
+}
