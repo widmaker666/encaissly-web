@@ -330,8 +330,11 @@ export const userService = {
 };
 
 export const stripeService = {
+  //- `origin` permet au backend de nous rediriger ici après paiement plutôt
+  //- que vers lui-même (voir boutique-backend@49c0760) — toujours l'origine
+  //- réelle du site, jamais une valeur arbitraire.
   createCheckoutSession: async (priceId: string) => {
-    const { data } = await api.post<{ url: string }>("/stripe/checkout", { priceId });
+    const { data } = await api.post<{ url: string }>("/stripe/checkout", { priceId, origin: window.location.origin });
     return data;
   },
   cancelSubscription: async () => {

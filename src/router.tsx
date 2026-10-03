@@ -9,7 +9,7 @@ import Ventes from "@/pages/Ventes/Ventes";
 import Creatrices from "@/pages/Creatrices/Creatrices";
 import CreatriceDetail from "@/pages/Creatrices/CreatriceDetail";
 import Stats from "@/pages/Stats/Stats";
-import ComingSoon from "@/pages/ComingSoon";
+import Profil from "@/pages/Profil/Profil";
 
 /** Les routes `(app)` du mobile — redirige vers /login si pas de session. */
 function RequireAuth() {
@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
           { path: "/creatrices", element: <Creatrices /> },
           { path: "/creatrices/:id", element: <CreatriceDetail /> },
           { path: "/stats", element: <Stats /> },
-          { path: "/profil", element: <ComingSoon label="Profil" /> },
+          { path: "/profil", element: <Profil /> },
         ],
       },
     ],

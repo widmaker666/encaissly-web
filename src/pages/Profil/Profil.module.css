@@ -1,0 +1,394 @@
+.page {
+  max-width: 480px;
+}
+
+.header {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.avatarWrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.avatarImg {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primary-light);
+}
+
+.avatarPlaceholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: var(--size-xl);
+}
+
+.cameraBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  border: 2px solid var(--color-surface);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.name {
+  margin: 0 0 2px;
+}
+
+.email {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: 0 0 14px;
+}
+
+.badgeRow {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.badgePrimary,
+.badgeFree,
+.badgePro,
+.badgeDuo {
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-family: var(--font-bold);
+  font-size: 11px;
+  color: white;
+}
+
+.badgePrimary {
+  background: var(--color-primary);
+}
+
+.badgeFree {
+  background: #666;
+}
+
+.badgePro {
+  background: #1a7a4a;
+}
+
+.badgeDuo {
+  background: #eb7f45;
+}
+
+.errorBanner {
+  background: #fdeaea;
+  color: var(--color-error);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: var(--size-sm);
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  margin: 20px 0 10px;
+}
+
+.notice {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: 0;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.infoLabel {
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  color: var(--color-text-light);
+}
+
+.infoValue {
+  font-size: var(--size-sm);
+  text-align: right;
+}
+
+.editInput {
+  border: none;
+  border-bottom: 1.5px solid var(--color-primary);
+  text-align: right;
+  padding: 4px 0;
+  font-size: var(--size-sm);
+  flex: 1;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 10px 0;
+}
+
+.editActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.cancelBtn,
+.saveBtn {
+  flex: 1;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: var(--font-medium);
+  cursor: pointer;
+}
+
+.cancelBtn {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-light);
+}
+
+.saveBtn {
+  border: none;
+  background: var(--color-primary);
+  color: white;
+  font-family: var(--font-bold);
+}
+
+.editBtn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.switchRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.switchLabel {
+  font-family: var(--font-medium);
+}
+
+.switchDesc {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-top: 2px;
+}
+
+/* Abonnement */
+.planBlock,
+.freeBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.planTitle {
+  font-family: var(--font-bold);
+  font-size: var(--size-md);
+  color: var(--color-primary);
+}
+
+.planTitleDuo {
+  font-family: var(--font-bold);
+  font-size: var(--size-md);
+  color: #eb7f45;
+}
+
+.activeBadge,
+.activeBadgeDuo {
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-family: var(--font-bold);
+  font-size: 11px;
+}
+
+.activeBadge {
+  background: #e6f7ef;
+  color: #1a7a4a;
+}
+
+.activeBadgeDuo {
+  background: #fdf0e8;
+  color: #eb7f45;
+}
+
+.planDesc,
+.freeDesc {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: 0;
+}
+
+.resilierBtn {
+  background: none;
+  border: none;
+  color: var(--color-error);
+  text-decoration: underline;
+  font-size: var(--size-sm);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.freeTitle {
+  font-family: var(--font-bold);
+  font-size: var(--size-md);
+  margin: 0;
+}
+
+.upgradeLabel {
+  font-family: var(--font-bold);
+  color: var(--color-primary);
+  font-size: var(--size-sm);
+  margin: 0;
+}
+
+.featureList {
+  margin: 0 0 4px;
+  padding-left: 18px;
+  font-size: var(--size-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.periodToggle {
+  display: flex;
+  gap: 4px;
+  background: #f0eaf8;
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.periodBtn {
+  flex: 1;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  padding: 7px;
+  font-family: var(--font-medium);
+  font-size: var(--size-xs);
+  color: var(--color-text-light);
+  cursor: pointer;
+}
+
+.periodBtnActive {
+  background: var(--color-primary);
+  color: white;
+}
+
+.upgradeBtn,
+.duoBtn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  color: white;
+  font-family: var(--font-bold);
+  cursor: pointer;
+}
+
+.upgradeBtn {
+  background: var(--color-primary);
+}
+
+.upgradeBtn:hover {
+  background: var(--color-primary-dark);
+}
+
+.duoBtn {
+  background: #eb7f45;
+}
+
+.legalLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+  font-size: var(--size-sm);
+}
+
+.logoutBtn {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid #fde8e8;
+  border-radius: 14px;
+  padding: 14px;
+  color: var(--color-error);
+  font-family: var(--font-bold);
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.deleteAccountBtn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-text-light);
+  text-decoration: underline;
+  font-size: var(--size-xs);
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.footer {
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 20px;
+}
