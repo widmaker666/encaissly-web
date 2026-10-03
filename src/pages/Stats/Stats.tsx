@@ -5,9 +5,9 @@ import type { StatsParams } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { isDuo, isGerante, isPro as checkIsPro } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
-import { downloadFile } from "@/lib/download";
 import DuoModeToggle from "@/components/DuoModeToggle";
 import VentesExportButtons from "@/components/VentesExportButtons";
+import RapportExportButtons from "@/components/RapportExportButtons";
 import styles from "./Stats.module.css";
 
 // Port de encaissly-mobile/pages/Stats/index.tsx — même données, même
@@ -52,7 +52,6 @@ export default function Stats() {
   const currentMode: "GERANTE" | "CREATRICE" = gerante ? "GERANTE" : "CREATRICE";
 
   const [filter, setFilter] = useState<Filter>({ type: "all" });
-  const [downloading, setDownloading] = useState<string | null>(null);
 
   const { data: mesEvenements } = useQuery<Evenement[]>({
     queryKey: ["mes-evenements-stats"],
@@ -119,12 +118,6 @@ export default function Stats() {
   const caMaxArticle = topArticles.reduce((max, a) => (a.ca > max ? a.ca : max), 0);
 
   const parCreatrice = parCreatriceData ?? [];
-
-  async function handleDownload(path: string, filename: string) {
-    setDownloading(filename);
-    await downloadFile(path, filename);
-    setDownloading(null);
-  }
 
   const hasPills = (mesBoutiques && mesBoutiques.length > 0) || (mesEvenements && mesEvenements.length > 0);
 
@@ -295,43 +288,7 @@ export default function Stats() {
       )}
 
       <h3 className={styles.sectionTitle}>Téléchargements</h3>
-      <div className={styles.card}>
-        <button type="button" className={styles.exportRow} onClick={() => handleDownload(gerante ? "/export/pdf/boutique" : "/export/pdf", "rapport.pdf")} disabled={!!downloading}>
-          <span className={styles.exportText}>
-            <span className={styles.exportLabel}>📄 Rapport PDF</span>
-            <span className={styles.exportSub}>Toujours disponible</span>
-          </span>
-          <span>{downloading === "rapport.pdf" ? "…" : "↓"}</span>
-        </button>
-        {pro ? (
-          <button type="button" className={styles.exportRow} onClick={() => handleDownload(gerante ? "/export/csv/boutique" : "/export/csv", "export.csv")} disabled={!!downloading}>
-            <span className={styles.exportText}>
-              <span className={styles.exportLabel}>📊 Export CSV</span>
-              <span className={styles.exportSub}>Ouvrir dans Excel / Sheets</span>
-            </span>
-            <span>{downloading === "export.csv" ? "…" : "↓"}</span>
-          </button>
-        ) : (
-          <div className={`${styles.exportRow} ${styles.exportRowLocked}`}>
-            <span className={styles.exportLabelLocked}>🔒 Export CSV</span>
-            <span className={styles.exportBadge}>PRO</span>
-          </div>
-        )}
-        {pro ? (
-          <button type="button" className={styles.exportRow} onClick={() => handleDownload(gerante ? "/export/excel/boutique" : "/export/excel", "export.xlsx")} disabled={!!downloading}>
-            <span className={styles.exportText}>
-              <span className={styles.exportLabel}>📗 Export Excel</span>
-              <span className={styles.exportSub}>Fichier .xlsx mis en forme</span>
-            </span>
-            <span>{downloading === "export.xlsx" ? "…" : "↓"}</span>
-          </button>
-        ) : (
-          <div className={`${styles.exportRow} ${styles.exportRowLocked}`}>
-            <span className={styles.exportLabelLocked}>🔒 Export Excel</span>
-            <span className={styles.exportBadge}>PRO</span>
-          </div>
-        )}
-      </div>
+      <RapportExportButtons scope={gerante ? "boutique" : "personal"} filenameBase={gerante ? "rapport-boutique" : "rapport"} />
 
       {gerante && (
         <>

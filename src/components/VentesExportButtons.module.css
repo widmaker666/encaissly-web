@@ -12,6 +12,29 @@
   line-height: 1.4;
 }
 
+.periodeToggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.periodeBtn {
+  flex: 1;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 10px;
+  padding: 8px;
+  font-family: var(--font-medium);
+  font-size: var(--size-sm);
+  cursor: pointer;
+}
+
+.periodeBtnActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
 .monthRow {
   display: flex;
   align-items: center;
