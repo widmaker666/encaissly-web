@@ -5,9 +5,15 @@ import { creatriceService } from "@/services/api";
 import { getErrorMessage } from "@/lib/errors";
 import { formatMontant } from "@/lib/money";
 import { formatDateLong } from "@/lib/date";
-import type { CreatriceDetail as CreatriceDetailType, VenteDetail } from "@/types";
+import type { CreatriceDetail as CreatriceDetailType, ModePaiement, VenteDetail } from "@/types";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import VentesExportButtons from "@/components/VentesExportButtons";
+import Button from "@/components/Button";
+import { CardButton } from "@/components/Card";
+import Avatar from "@/components/Avatar";
+import Badge from "@/components/Badge";
+import Notice from "@/components/Notice";
+import Table, { type Column } from "@/components/Table";
 import CreatriceFormModal from "./CreatriceFormModal";
 import InviteModal from "./InviteModal";
 import styles from "./CreatriceDetail.module.css";
@@ -31,6 +37,11 @@ function groupVentes(ventes: VenteDetail[]) {
   }
   return Array.from(map.values());
 }
+
+const paiementColor: Record<ModePaiement, "info" | "warning"> = {
+  CARTE: "info",
+  ESPECES: "warning",
+};
 
 export default function CreatriceDetail() {
   const { id = "" } = useParams<{ id: string }>();
@@ -56,33 +67,48 @@ export default function CreatriceDetail() {
     onError: (err) => alert(getErrorMessage(err, "Impossible de supprimer la créatrice.")),
   });
 
-  if (isLoading) return <p className={styles.notice}>Chargement…</p>;
-  if (!creatrice) return <p className={styles.notice}>Créatrice introuvable.</p>;
+  if (isLoading) return <Notice>Chargement…</Notice>;
+  if (!creatrice) return <Notice>Créatrice introuvable.</Notice>;
 
   const initiales = creatrice.nom.substring(0, 2).toUpperCase();
 
+  const columns: Column<VenteDetail & { quantite: number }>[] = [
+    {
+      key: "article",
+      header: "Article",
+      render: (v) => `${v.nomArticle}${v.quantite > 1 ? ` × ${v.quantite}` : ""}`,
+    },
+    { key: "date", header: "Date", render: (v) => formatDateLong(v.createdAt) },
+    { key: "prix", header: "Prix", render: (v) => formatMontant(v.prixVente) },
+    {
+      key: "mode",
+      header: "Paiement",
+      render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge>,
+    },
+  ];
+
   return (
-    <div>
-      <button type="button" className={styles.backBtn} onClick={() => navigate("/creatrices")}>
+    <div className={styles.page}>
+      <Button variant="link" onClick={() => navigate("/creatrices")}>
         ‹ Toutes les créatrices
-      </button>
+      </Button>
 
       <div className={styles.header}>
-        <div className={styles.avatar}>{initiales}</div>
-        <div>
-          <h2>{creatrice.nom}</h2>
-          <span className={styles.commissionBadge}>{creatrice.tauxDeCommission}% de commission</span>
+        <Avatar name={creatrice.nom} initials={initiales} size="lg" color="var(--color-primary-light)" />
+        <div className={styles.identity}>
+          <h1 className={styles.nom}>{creatrice.nom}</h1>
+          <Badge color="neutral">{creatrice.tauxDeCommission}% de commission</Badge>
         </div>
         <div className={styles.actions}>
-          <button type="button" className={styles.editBtn} onClick={() => setEditOpen(true)}>
+          <Button variant="secondary" size="sm" onClick={() => setEditOpen(true)}>
             Modifier
-          </button>
-          <button type="button" className={styles.editBtn} onClick={() => setInviteOpen(true)}>
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => setInviteOpen(true)}>
             Inviter
-          </button>
-          <button type="button" className={styles.deleteBtn} onClick={() => setConfirmDelete(true)}>
+          </Button>
+          <Button variant="dangerOutline" size="sm" onClick={() => setConfirmDelete(true)}>
             Supprimer
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -105,53 +131,30 @@ export default function CreatriceDetail() {
         </div>
       </div>
 
-      <button
-        type="button"
-        className={styles.catalogueBtn}
-        style={{ marginTop: 16 }}
+      <CardButton
+        padding="sm"
+        style={{ maxWidth: 420 }}
         onClick={() => navigate(`/creatrices/${creatrice.id}/articles?nom=${encodeURIComponent(creatrice.nom)}`)}
       >
-        Voir les articles ›
-      </button>
+        <span className={styles.catalogueLink}>Voir les articles ›</span>
+      </CardButton>
 
-      <h3 className={styles.sectionTitle}>Récupérer ses ventes</h3>
-      <VentesExportButtons
-        creatriceId={creatrice.id}
-        filenameBase={`ventes-${creatrice.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-      />
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Récupérer ses ventes</h2>
+        <VentesExportButtons
+          creatriceId={creatrice.id}
+          filenameBase={`ventes-${creatrice.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+        />
+      </section>
 
-      <h3 className={styles.sectionTitle}>Ventes ({creatrice.ventes.length})</h3>
-      {creatrice.ventes.length === 0 ? (
-        <p className={styles.notice}>Aucune vente enregistrée.</p>
-      ) : (
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Article</th>
-              <th>Date</th>
-              <th>Prix</th>
-              <th>Paiement</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groupVentes(creatrice.ventes).map((v) => (
-              <tr key={v.id}>
-                <td>
-                  {v.nomArticle}
-                  {v.quantite > 1 ? ` × ${v.quantite}` : ""}
-                </td>
-                <td>{formatDateLong(v.createdAt)}</td>
-                <td>{formatMontant(v.prixVente)}</td>
-                <td>
-                  <span className={v.modePaiement === "ESPECES" ? styles.badgeEspeces : styles.badgeCarte}>
-                    {v.modePaiement}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Ventes ({creatrice.ventes.length})</h2>
+        {creatrice.ventes.length === 0 ? (
+          <Notice>Aucune vente enregistrée.</Notice>
+        ) : (
+          <Table columns={columns} rows={groupVentes(creatrice.ventes)} rowKey={(v) => v.id} />
+        )}
+      </section>
 
       <CreatriceFormModal open={editOpen} onClose={() => setEditOpen(false)} creatrice={creatrice} />
 

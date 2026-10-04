@@ -7,8 +7,20 @@ import { isDuo, isGerante, FREE_LIMITS } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
 import type { Creatrice } from "@/types";
 import DuoModeToggle from "@/components/DuoModeToggle";
+import Button from "@/components/Button";
+import Notice from "@/components/Notice";
+import Table, { type Column } from "@/components/Table";
+import { fieldControl } from "@/components/Field";
 import CreatriceFormModal from "./CreatriceFormModal";
 import styles from "./Creatrices.module.css";
+
+const columns: Column<Creatrice>[] = [
+  { key: "nom", header: "Nom", render: (c) => <span className={styles.nomCell}>{c.nom}</span>, sortValue: (c) => c.nom },
+  { key: "contact", header: "Contact", render: (c) => c.email ?? c.telephone ?? "—" },
+  { key: "commission", header: "Commission", render: (c) => `${c.tauxDeCommission}%`, sortValue: (c) => c.tauxDeCommission },
+  { key: "ventes", header: "Ventes", render: (c) => c.nbVentes ?? 0, sortValue: (c) => c.nbVentes ?? 0 },
+  { key: "ca", header: "CA", align: "right", render: (c) => formatMontant(c.ca), sortValue: (c) => c.ca ?? 0 },
+];
 
 export default function Creatrices() {
   const navigate = useNavigate();
@@ -39,66 +51,42 @@ export default function Creatrices() {
   }
 
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h2>Créatrices</h2>
+          <h1 className={styles.title}>Créatrices</h1>
           <p className={styles.subtitle}>
             {count} créatrice{count > 1 ? "s" : ""} · {user?.plan ?? "FREE"}
           </p>
           {isDuo(user) && <DuoModeToggle />}
         </div>
-        <button
-          type="button"
-          className={styles.addBtn}
+        <Button
           onClick={() => !atFreeLimit && setCreateOpen(true)}
           disabled={atFreeLimit}
           title={atFreeLimit ? `Plan FREE limité à ${FREE_LIMITS.maxCreatrices} créatrices` : undefined}
         >
           + Nouvelle créatrice
-        </button>
+        </Button>
       </div>
 
       <input
-        className={styles.search}
+        className={fieldControl}
+        style={{ maxWidth: 320 }}
         placeholder="Rechercher une créatrice…"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       {isLoading ? (
-        <p className={styles.notice}>Chargement…</p>
+        <Notice>Chargement…</Notice>
       ) : filtered.length === 0 ? (
-        <p className={styles.notice}>{search ? "Aucune créatrice trouvée." : "Aucune créatrice pour l'instant."}</p>
+        <Notice>{search ? "Aucune créatrice trouvée." : "Aucune créatrice pour l'instant."}</Notice>
       ) : (
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Contact</th>
-              <th>Commission</th>
-              <th>Ventes</th>
-              <th>CA</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((c) => (
-              <tr key={c.id} className={styles.row} onClick={() => navigate(`/creatrices/${c.id}`)}>
-                <td className={styles.nomCell}>{c.nom}</td>
-                <td>{c.email ?? c.telephone ?? "—"}</td>
-                <td>{c.tauxDeCommission}%</td>
-                <td>{c.nbVentes ?? 0}</td>
-                <td>{formatMontant(c.ca)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table columns={columns} rows={filtered} rowKey={(c) => c.id} onRowClick={(c) => navigate(`/creatrices/${c.id}`)} sortable />
       )}
 
       {atFreeLimit && (
-        <p className={styles.notice}>
-          🔒 Plan FREE limité à {FREE_LIMITS.maxCreatrices} créatrices — passe à PRO pour en ajouter davantage.
-        </p>
+        <Notice>🔒 Plan FREE limité à {FREE_LIMITS.maxCreatrices} créatrices — passe à PRO pour en ajouter davantage.</Notice>
       )}
 
       <CreatriceFormModal open={createOpen} onClose={() => setCreateOpen(false)} />
