@@ -37,33 +37,43 @@ export default function AppLayout() {
     navigate("/login", { replace: true });
   }
 
+  const initiale = (user?.prenom ?? user?.email ?? "?").charAt(0).toUpperCase();
+
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
-        <h1 className={styles.logo}>Encaissly</h1>
+        <div className={styles.sidebarTop}>
+          <h1 className={styles.logo}>Encaissly</h1>
 
-        <nav className={styles.nav}>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === "/"}
-              className={({ isActive }) => (isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink)}
-            >
-              {item.label}
-              {item.to === "/notifications" && unreadCount > 0 && (
-                <span className={styles.badge}>{unreadCount > 99 ? "99+" : unreadCount}</span>
-              )}
-            </NavLink>
-          ))}
-        </nav>
+          <nav className={styles.nav}>
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === "/"}
+                className={({ isActive }) => (isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink)}
+              >
+                {item.label}
+                {item.to === "/notifications" && unreadCount > 0 && (
+                  <span className={styles.badge}>{unreadCount > 99 ? "99+" : unreadCount}</span>
+                )}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
 
         <div className={styles.footer}>
           {user && (
-            <p className={styles.user}>
-              {user.prenom ?? user.email}
-              {isDuo(user) && " · DUO"}
-            </p>
+            <div className={styles.userRow}>
+              <div className={styles.avatar}>{initiale}</div>
+              <div>
+                <div className={styles.userName}>{user.prenom ?? user.email}</div>
+                <div className={styles.userPlan}>
+                  {user.plan ?? "FREE"}
+                  {isDuo(user) && " · DUO"}
+                </div>
+              </div>
+            </div>
           )}
           <button className={styles.logoutBtn} onClick={handleLogout}>
             Déconnexion
@@ -72,7 +82,9 @@ export default function AppLayout() {
       </aside>
 
       <main className={styles.content}>
-        <Outlet />
+        <div className={styles.contentInner}>
+          <Outlet />
+        </div>
       </main>
     </div>
   );
