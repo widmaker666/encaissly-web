@@ -18,6 +18,8 @@ import Notice from "@/components/Notice";
 
 // Passer à true quand Stripe live sera activé (SIRET en cours)
 const PAIEMENT_ACTIF = false;
+const CONTACT_EMAIL = "contact.encaissly@gmail.com";
+const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Encaissly — bug ou suggestion")}`;
 const PAIEMENT_MSG = "Les abonnements ne sont pas encore disponibles : le site et l'application sont en phase de test. Ça arrive très bientôt !";
 import { fieldControl } from "@/components/Field";
 import styles from "./Profil.module.css";
@@ -442,6 +444,18 @@ export default function Profil() {
               {paiementInfo && <Notice>{PAIEMENT_MSG}</Notice>}
             </div>
           )}
+        </Card>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Un bug ? Une idée ?</h2>
+        <Card className={styles.helpCard}>
+          <p className={styles.contactDesc}>
+            Encaissly est en phase de test : dis-moi ce qui ne marche pas ou ce que tu aimerais voir en plus, je lis tous les messages.
+          </p>
+          <a className={styles.contactBtn} href={CONTACT_MAILTO}>
+            ✉️ Écrire à {CONTACT_EMAIL}
+          </a>
         </Card>
       </section>
 

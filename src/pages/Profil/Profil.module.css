@@ -257,3 +257,32 @@
   font-size: 11px;
   opacity: 0.7;
 }
+
+.contactDesc {
+  margin: 0;
+  font-size: var(--size-sm);
+  color: var(--color-text-light);
+  line-height: 1.5;
+}
+
+/* Lien mailto stylé comme Button variant="secondary" */
+.contactBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: var(--size-sm);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.contactBtn:hover {
+  border-color: var(--color-text);
+}
