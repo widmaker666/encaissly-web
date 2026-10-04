@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { venteService } from "@/services/api";
@@ -8,13 +8,39 @@ import { formatMontant } from "@/lib/money";
 import { formatDate } from "@/lib/date";
 import type { ModePaiement, Vente } from "@/types";
 import DuoModeToggle from "@/components/DuoModeToggle";
+import Button from "@/components/Button";
+import Chip from "@/components/Chip";
+import Badge from "@/components/Badge";
+import Notice from "@/components/Notice";
+import Table, { type Column } from "@/components/Table";
 import VenteCreateModal from "./VenteCreateModal";
 import VenteEditModal from "./VenteEditModal";
 import styles from "./Ventes.module.css";
 
 type FilterMode = "TOUT" | ModePaiement;
-type SortKey = "article" | "prix" | "mode" | "date";
-type SortDir = "asc" | "desc";
+
+const paiementColor: Record<ModePaiement, "info" | "warning"> = {
+  CARTE: "info",
+  ESPECES: "warning",
+};
+
+const columns: Column<Vente>[] = [
+  {
+    key: "article",
+    header: "Article",
+    render: (v) => `${v.nomArticle}${(v.quantite ?? 1) > 1 ? ` × ${v.quantite}` : ""}`,
+    sortValue: (v) => v.nomArticle,
+  },
+  { key: "qui", header: "Créatrice / événement", render: (v) => v.evenement?.nom ?? v.creatrice?.nom ?? "—" },
+  { key: "prix", header: "Prix", render: (v) => formatMontant(v.prixVente), sortValue: (v) => v.prixVente },
+  {
+    key: "mode",
+    header: "Paiement",
+    render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge>,
+    sortValue: (v) => v.modePaiement,
+  },
+  { key: "date", header: "Date", render: (v) => formatDate(v.createdAt), sortValue: (v) => new Date(v.createdAt).getTime() },
+];
 
 export default function Ventes() {
   const user = useAuthStore((s) => s.user);
@@ -24,7 +50,6 @@ export default function Ventes() {
   const gerante = isGerante(user, duoMode);
 
   const [filter, setFilter] = useState<FilterMode>("TOUT");
-  const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({ key: "date", dir: "desc" });
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Vente | null>(null);
 
@@ -44,112 +69,47 @@ export default function Ventes() {
     queryFn: () => venteService.getAll(queryFilters),
   });
 
-  const sorted = useMemo(() => {
-    const list = [...(ventes ?? [])];
-    const dir = sort.dir === "asc" ? 1 : -1;
-    list.sort((a, b) => {
-      switch (sort.key) {
-        case "article":
-          return a.nomArticle.localeCompare(b.nomArticle) * dir;
-        case "prix":
-          return (a.prixVente - b.prixVente) * dir;
-        case "mode":
-          return a.modePaiement.localeCompare(b.modePaiement) * dir;
-        case "date":
-        default:
-          return (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * dir;
-      }
-    });
-    return list;
-  }, [ventes, sort]);
-
-  function toggleSort(key: SortKey) {
-    setSort((prev) => (prev.key === key ? { key, dir: prev.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }));
-  }
-
-  function sortIndicator(key: SortKey) {
-    if (sort.key !== key) return "";
-    return sort.dir === "asc" ? " ↑" : " ↓";
-  }
-
   const count = ventes?.length ?? 0;
 
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h2>Ventes</h2>
+          <h1 className={styles.title}>Ventes</h1>
           <p className={styles.subtitle}>
             {activeEvenementNom ? `🎪 ${activeEvenementNom}` : `${count} vente${count > 1 ? "s" : ""} · ${user?.plan ?? "FREE"}`}
           </p>
           {isDuo(user) && <DuoModeToggle />}
         </div>
-        <button
-          type="button"
-          className={styles.addBtn}
+        <Button
           onClick={() => canSell && setCreateOpen(true)}
           disabled={!canSell}
           title={canSell ? undefined : "Active un événement pour pouvoir vendre"}
         >
           + Ajouter une vente
-        </button>
+        </Button>
       </div>
 
       {!canSell && (
-        <p className={styles.notice}>
+        <Notice>
           Aucun événement actif — crée ou ouvre un événement depuis ton <Link to="/profil">profil</Link>, puis reviens ici pour vendre.
-        </p>
+        </Notice>
       )}
 
       <div className={styles.filters}>
         {(["TOUT", "ESPECES", "CARTE"] as FilterMode[]).map((f) => (
-          <button
-            key={f}
-            type="button"
-            className={filter === f ? `${styles.chip} ${styles.chipActive}` : styles.chip}
-            onClick={() => setFilter(f)}
-          >
+          <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>
             {f}
-          </button>
+          </Chip>
         ))}
       </div>
 
       {isLoading ? (
-        <p className={styles.notice}>Chargement…</p>
-      ) : sorted.length === 0 ? (
-        <p className={styles.notice}>
-          {filter !== "TOUT" ? `Aucune vente en ${filter}` : "Aucune vente pour l'instant."}
-        </p>
+        <Notice>Chargement…</Notice>
+      ) : count === 0 ? (
+        <Notice>{filter !== "TOUT" ? `Aucune vente en ${filter}` : "Aucune vente pour l'instant."}</Notice>
       ) : (
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th onClick={() => toggleSort("article")}>Article{sortIndicator("article")}</th>
-              <th>Créatrice / événement</th>
-              <th onClick={() => toggleSort("prix")}>Prix{sortIndicator("prix")}</th>
-              <th onClick={() => toggleSort("mode")}>Paiement{sortIndicator("mode")}</th>
-              <th onClick={() => toggleSort("date")}>Date{sortIndicator("date")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sorted.map((v) => (
-              <tr key={v.id} className={styles.row} onClick={() => setEditing(v)}>
-                <td>
-                  {v.nomArticle}
-                  {(v.quantite ?? 1) > 1 ? ` × ${v.quantite}` : ""}
-                </td>
-                <td>{v.evenement?.nom ?? v.creatrice?.nom ?? "—"}</td>
-                <td>{formatMontant(v.prixVente)}</td>
-                <td>
-                  <span className={v.modePaiement === "ESPECES" ? styles.badgeEspeces : styles.badgeCarte}>
-                    {v.modePaiement}
-                  </span>
-                </td>
-                <td>{formatDate(v.createdAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table columns={columns} rows={ventes ?? []} rowKey={(v) => v.id} onRowClick={setEditing} sortable />
       )}
 
       <VenteCreateModal open={createOpen} onClose={() => setCreateOpen(false)} />

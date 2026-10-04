@@ -8,6 +8,10 @@ import { formatMontant } from "@/lib/money";
 import DuoModeToggle from "@/components/DuoModeToggle";
 import VentesExportButtons from "@/components/VentesExportButtons";
 import RapportExportButtons from "@/components/RapportExportButtons";
+import Card from "@/components/Card";
+import Chip from "@/components/Chip";
+import Notice from "@/components/Notice";
+import Table, { type Column } from "@/components/Table";
 import styles from "./Stats.module.css";
 
 // Port de encaissly-mobile/pages/Stats/index.tsx — même données, même
@@ -42,6 +46,13 @@ interface TopArticleRow {
   quantite?: number;
   nbVentes?: number;
 }
+
+const parCreatriceColumns: Column<ParCreatriceRow>[] = [
+  { key: "nom", header: "Nom", render: (c) => c.nom },
+  { key: "ca", header: "CA", align: "right", render: (c) => formatMontant(c.ca) },
+  { key: "commissions", header: "Commission", align: "right", render: (c) => formatMontant(c.commissions) },
+  { key: "net", header: "Net", align: "right", render: (c) => <span className={styles.tableNet}>{formatMontant(c.net)}</span> },
+];
 
 export default function Stats() {
   const user = useAuthStore((s) => s.user);
@@ -136,179 +147,168 @@ export default function Stats() {
   const hasPills = boutiquesAffichees.length > 0 || evenementsAffiches.length > 0;
 
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.header}>
-        <div>
-          <h2>Stats</h2>
-          <p className={styles.subtitle}>
-            {filter.type !== "all" ? `${filter.type === "event" ? "🎪" : "🏪"} ${filter.nom}` : pro ? "3 derniers mois" : "Mois en cours"}
-          </p>
-          {isDuo(user) && <DuoModeToggle />}
-        </div>
+        <h1 className={styles.title}>Stats</h1>
+        <p className={styles.subtitle}>
+          {filter.type !== "all" ? `${filter.type === "event" ? "🎪" : "🏪"} ${filter.nom}` : pro ? "3 derniers mois" : "Mois en cours"}
+        </p>
+        {isDuo(user) && <DuoModeToggle />}
       </div>
 
       {hasPills && (
         <div className={styles.pills}>
-          <button type="button" className={filter.type === "all" ? `${styles.pill} ${styles.pillActive}` : styles.pill} onClick={() => setFilter({ type: "all" })}>
+          <Chip active={filter.type === "all"} onClick={() => setFilter({ type: "all" })}>
             Tout
-          </button>
+          </Chip>
           {boutiquesAffichees.map((b) => (
-            <button
+            <Chip
               key={b.id}
-              type="button"
-              className={filter.type === "boutique" && filter.id === b.id ? `${styles.pill} ${styles.pillActive}` : styles.pill}
+              active={filter.type === "boutique" && filter.id === b.id}
               onClick={() => setFilter({ type: "boutique", id: b.id, nom: b.nom })}
             >
               🏪 {b.nom}
-            </button>
+            </Chip>
           ))}
           {evenementsAffiches.map((e) => (
-            <button
+            <Chip
               key={e.id}
-              type="button"
-              className={filter.type === "event" && filter.id === e.id ? `${styles.pill} ${styles.pillActive}` : styles.pill}
+              active={filter.type === "event" && filter.id === e.id}
               onClick={() => setFilter({ type: "event", id: e.id, nom: e.nom })}
             >
               🎪 {e.nom}
-            </button>
+            </Chip>
           ))}
         </div>
       )}
 
-      <h3 className={styles.sectionTitle}>Résumé</h3>
-      <div className={styles.kpiGrid}>
-        <div className={styles.kpiCard}>
-          <div className={styles.kpiLabel}>{gerante ? "CA boutique" : "Chiffre d'affaires"}</div>
-          <div className={styles.kpiValue}>{formatMontant(currentCA)}</div>
-          {evolution !== null && (
-            <div className={evolution >= 0 ? styles.evolutionUp : styles.evolutionDown}>
-              {evolution >= 0 ? "▲ +" : "▼ "}
-              {evolution.toFixed(1)}%
-            </div>
-          )}
-        </div>
-        <div className={styles.kpiCard}>
-          <div className={styles.kpiLabel}>{gerante ? "Créatrices actives" : "Ventes"}</div>
-          <div className={styles.kpiValue}>{gerante ? creatricesActives : nbVentes}</div>
-        </div>
-        <div className={styles.kpiCard}>
-          <div className={styles.kpiLabel}>{gerante ? "Commissions reçues" : "Net à percevoir"}</div>
-          <div className={styles.kpiValueGreen}>{formatMontant(gerante ? totalCommissions : netCreatrice)}</div>
-        </div>
-        <div className={styles.kpiCard}>
-          <div className={styles.kpiLabel}>Ticket moyen</div>
-          <div className={styles.kpiValue}>{formatMontant(ticketMoyen)}</div>
-        </div>
-      </div>
-
-      <h3 className={styles.sectionTitle}>Répartition paiements</h3>
-      <div className={styles.card}>
-        {[
-          { label: "💵 Espèces", montant: especesMontant },
-          { label: "💳 Carte", montant: carteMontant },
-        ].map((item) => {
-          const pct = paiementsTotal > 0 ? (item.montant / paiementsTotal) * 100 : 0;
-          return (
-            <div key={item.label} className={styles.barRow}>
-              <div className={styles.barLabelRow}>
-                <span>{item.label}</span>
-                <span className={styles.barMontant}>{formatMontant(item.montant)}</span>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Résumé</h2>
+        <div className={styles.kpiGrid}>
+          <Card padding="sm">
+            <div className={styles.kpiLabel}>{gerante ? "CA boutique" : "Chiffre d'affaires"}</div>
+            <div className={styles.kpiValue}>{formatMontant(currentCA)}</div>
+            {evolution !== null && (
+              <div className={evolution >= 0 ? styles.evolutionUp : styles.evolutionDown}>
+                {evolution >= 0 ? "▲ +" : "▼ "}
+                {evolution.toFixed(1)}%
               </div>
-              <div className={styles.barTrack}>
-                <div className={styles.barFill} style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%` }} title={`${pct.toFixed(0)}%`} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <h3 className={styles.sectionTitle}>Historique mensuel</h3>
-      {!pro ? (
-        <div className={styles.lockedBox}>
-          <p className={styles.lockedTitle}>Historique disponible en PRO</p>
-          <p className={styles.lockedDesc}>Accède aux 3 derniers mois de chiffre d'affaires avec le plan PRO.</p>
+            )}
+          </Card>
+          <Card padding="sm">
+            <div className={styles.kpiLabel}>{gerante ? "Créatrices actives" : "Ventes"}</div>
+            <div className={styles.kpiValue}>{gerante ? creatricesActives : nbVentes}</div>
+          </Card>
+          <Card padding="sm">
+            <div className={styles.kpiLabel}>{gerante ? "Commissions reçues" : "Net à percevoir"}</div>
+            <div className={styles.kpiValueGreen}>{formatMontant(gerante ? totalCommissions : netCreatrice)}</div>
+          </Card>
+          <Card padding="sm">
+            <div className={styles.kpiLabel}>Ticket moyen</div>
+            <div className={styles.kpiValue}>{formatMontant(ticketMoyen)}</div>
+          </Card>
         </div>
-      ) : historique.length > 0 ? (
-        <div className={styles.card}>
-          <div className={styles.chart}>
-            {historique.map((item) => {
-              const height = caMax > 0 ? (item.ca / caMax) * 140 : 4;
-              const label = item.mois.split(" ")[0].slice(0, 3);
+      </section>
+
+      <div className={styles.twoCol}>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Répartition paiements</h2>
+          <Card className={styles.barCard}>
+            {[
+              { label: "💵 Espèces", montant: especesMontant },
+              { label: "💳 Carte", montant: carteMontant },
+            ].map((item) => {
+              const pct = paiementsTotal > 0 ? (item.montant / paiementsTotal) * 100 : 0;
               return (
-                <div key={item.mois} className={styles.chartCol}>
-                  <span className={styles.chartValue}>{formatMontant(item.ca)}</span>
-                  <div className={styles.chartBar} style={{ height: Math.max(height, 4) }} title={formatMontant(item.ca)} />
-                  <span className={styles.chartLabel}>{label}</span>
+                <div key={item.label} className={styles.barRow}>
+                  <div className={styles.barLabelRow}>
+                    <span>{item.label}</span>
+                    <span className={styles.barMontant}>{formatMontant(item.montant)}</span>
+                  </div>
+                  <div className={styles.barTrack}>
+                    <div className={styles.barFill} style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%` }} title={`${pct.toFixed(0)}%`} />
+                  </div>
                 </div>
               );
             })}
-          </div>
-        </div>
-      ) : (
-        <p className={styles.notice}>Aucune donnée disponible.</p>
-      )}
+          </Card>
+        </section>
 
-      <h3 className={styles.sectionTitle}>Top articles</h3>
-      {topArticles.length === 0 ? (
-        <p className={styles.notice}>Aucun article vendu.</p>
-      ) : (
-        <div className={styles.card}>
-          {topArticles.map((article, i) => {
-            const pct = caMaxArticle > 0 ? (article.ca / caMaxArticle) * 100 : 0;
-            return (
-              <div key={article.nomArticle ?? i} className={styles.barRow}>
-                <div className={styles.barLabelRow}>
-                  <span>{article.nomArticle}</span>
-                  <span className={styles.barMontant}>{formatMontant(article.ca)}</span>
-                </div>
-                <div className={styles.articleMeta}>{article.quantite ?? article.nbVentes} vendu(s)</div>
-                <div className={styles.barTrack}>
-                  <div className={styles.barFill} style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%` }} title={`${pct.toFixed(0)}%`} />
-                </div>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Historique mensuel</h2>
+          {!pro ? (
+            <Card className={styles.lockedBox}>
+              <p className={styles.lockedTitle}>Historique disponible en PRO</p>
+              <p className={styles.lockedDesc}>Accède aux 3 derniers mois de chiffre d'affaires avec le plan PRO.</p>
+            </Card>
+          ) : historique.length > 0 ? (
+            <Card className={styles.barCard}>
+              <div className={styles.chart}>
+                {historique.map((item) => {
+                  const height = caMax > 0 ? (item.ca / caMax) * 140 : 4;
+                  const label = item.mois.split(" ")[0].slice(0, 3);
+                  return (
+                    <div key={item.mois} className={styles.chartCol}>
+                      <span className={styles.chartValue}>{formatMontant(item.ca)}</span>
+                      <div className={styles.chartBar} style={{ height: Math.max(height, 4) }} title={formatMontant(item.ca)} />
+                      <span className={styles.chartLabel}>{label}</span>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
-      )}
-
-      {gerante && (
-        <>
-          <h3 className={styles.sectionTitle}>Par créatrice</h3>
-          {parCreatrice.length === 0 ? (
-            <p className={styles.notice}>Aucune donnée créatrice.</p>
+            </Card>
           ) : (
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Nom</th>
-                  <th>CA</th>
-                  <th>Commission</th>
-                  <th>Net</th>
-                </tr>
-              </thead>
-              <tbody>
-                {parCreatrice.map((c) => (
-                  <tr key={c.id}>
-                    <td className={styles.tableNom}>{c.nom}</td>
-                    <td>{formatMontant(c.ca)}</td>
-                    <td>{formatMontant(c.commissions)}</td>
-                    <td className={styles.tableNet}>{formatMontant(c.net)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <Notice>Aucune donnée disponible.</Notice>
           )}
-        </>
-      )}
+        </section>
+      </div>
 
-      <h3 className={styles.sectionTitle}>Téléchargements</h3>
-      <RapportExportButtons scope={gerante ? "boutique" : "personal"} filenameBase={gerante ? "rapport-boutique" : "rapport"} />
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Top articles</h2>
+        {topArticles.length === 0 ? (
+          <Notice>Aucun article vendu.</Notice>
+        ) : (
+          <Card className={styles.barCard}>
+            {topArticles.map((article, i) => {
+              const pct = caMaxArticle > 0 ? (article.ca / caMaxArticle) * 100 : 0;
+              return (
+                <div key={article.nomArticle ?? i} className={styles.barRow}>
+                  <div className={styles.barLabelRow}>
+                    <span>{article.nomArticle}</span>
+                    <span className={styles.barMontant}>{formatMontant(article.ca)}</span>
+                  </div>
+                  <div className={styles.articleMeta}>{article.quantite ?? article.nbVentes} vendu(s)</div>
+                  <div className={styles.barTrack}>
+                    <div className={styles.barFill} style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%` }} title={`${pct.toFixed(0)}%`} />
+                  </div>
+                </div>
+              );
+            })}
+          </Card>
+        )}
+      </section>
 
       {gerante && (
-        <>
-          <h3 className={styles.sectionTitle}>Ventes des créatrices</h3>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Par créatrice</h2>
+          {parCreatrice.length === 0 ? (
+            <Notice>Aucune donnée créatrice.</Notice>
+          ) : (
+            <Table columns={parCreatriceColumns} rows={parCreatrice} rowKey={(c) => c.id} />
+          )}
+        </section>
+      )}
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Téléchargements</h2>
+        <RapportExportButtons scope={gerante ? "boutique" : "personal"} filenameBase={gerante ? "rapport-boutique" : "rapport"} />
+      </section>
+
+      {gerante && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Ventes des créatrices</h2>
           <VentesExportButtons filenameBase="ventes-boutique" />
-        </>
+        </section>
       )}
     </div>
   );
