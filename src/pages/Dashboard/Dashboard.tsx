@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { boutiqueService, venteService } from "@/services/api";
+import { boutiqueService, evenementService, venteService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { isDuo, isGerante } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
+import { formatDate } from "@/lib/date";
 import { getErrorMessage } from "@/lib/errors";
-import type { Vente } from "@/types";
+import type { Boutique, Vente } from "@/types";
 import DuoModeToggle from "@/components/DuoModeToggle";
 import VentesExportButtons from "@/components/VentesExportButtons";
 import styles from "./Dashboard.module.css";
@@ -16,6 +17,13 @@ interface BoutiqueAvecStats {
   nom: string;
   nbCreatrices: number;
   ca: number;
+}
+
+interface EvenementAvecVentes {
+  id: string;
+  nom: string;
+  dateDebut: string;
+  ventes?: { prixVente: number }[];
 }
 
 export default function Dashboard() {
@@ -61,12 +69,86 @@ export default function Dashboard() {
   const nomAffiche = user?.prenom || user?.nom ? `${user?.prenom ?? ""} ${user?.nom ?? ""}`.trim() : "Bonjour";
   const liste = boutiques ?? [];
 
+  const { data: mesEvenements, isLoading: loadingEvenements } = useQuery<EvenementAvecVentes[]>({
+    queryKey: ["evenements-recap"],
+    queryFn: () => evenementService.getAll(),
+    enabled: !gerante,
+  });
+
+  const { data: mesBoutiquesMembre } = useQuery<Boutique[]>({
+    queryKey: ["mes-boutiques"],
+    queryFn: () => boutiqueService.getMesBoutiques(),
+    enabled: !gerante,
+  });
+
   if (!gerante) {
+    const evenements = mesEvenements ?? [];
+    const boutiquesMembre = mesBoutiquesMembre ?? [];
+
     return (
       <div>
         <h2>Bonjour {nomAffiche}</h2>
         {isDuo(user) && <DuoModeToggle />}
-        <p className={styles.notice}>Ton tableau de bord perso (stats, historique) arrive à l'étape 2 sur le web.</p>
+
+        <div className={styles.howCard}>
+          <p className={styles.howTitle}>Comment vendre ?</p>
+          <div className={styles.howStep}>
+            <span className={styles.howBullet}>1</span>
+            <span>Active un de tes événements ci-dessous</span>
+          </div>
+          <div className={styles.howStep}>
+            <span className={styles.howBullet}>2</span>
+            <span>
+              Va dans <b>Ventes</b> et clique sur <b>+ Ajouter une vente</b>
+            </span>
+          </div>
+          <div className={styles.howStep}>
+            <span className={styles.howBullet}>3</span>
+            <span>Choisis tes articles et le mode de paiement</span>
+          </div>
+        </div>
+
+        <h3 className={styles.sectionTitle}>Mes événements ({evenements.length})</h3>
+        {loadingEvenements ? (
+          <p className={styles.notice}>Chargement…</p>
+        ) : evenements.length === 0 ? (
+          <p className={styles.notice}>
+            Aucun événement — crée-en un depuis ton <a href="/profil">profil</a> pour pouvoir vendre.
+          </p>
+        ) : (
+          <div className={styles.boutiquesGrid}>
+            {evenements.map((e) => {
+              const ca = (e.ventes ?? []).reduce((acc, v) => acc + v.prixVente, 0);
+              const nb = e.ventes?.length ?? 0;
+              return (
+                <button
+                  key={e.id}
+                  type="button"
+                  className={styles.boutiqueCard}
+                  onClick={() => navigate(`/evenements/${e.id}?nom=${encodeURIComponent(e.nom)}`)}
+                >
+                  <div className={styles.boutiqueNom}>{e.nom}</div>
+                  <div className={styles.boutiqueMeta}>
+                    {formatDate(e.dateDebut)} · {nb} vente{nb > 1 ? "s" : ""} · {formatMontant(ca)}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {boutiquesMembre.length > 0 && (
+          <>
+            <h3 className={styles.sectionTitle}>Mes boutiques ({boutiquesMembre.length})</h3>
+            <div className={styles.boutiquesGrid}>
+              {boutiquesMembre.map((b) => (
+                <div key={b.id} className={styles.boutiqueCardStatic}>
+                  <div className={styles.boutiqueNom}>{b.nom}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         <h3 className={styles.sectionTitle}>Dernières ventes</h3>
         {recentVentes && recentVentes.length > 0 ? (
