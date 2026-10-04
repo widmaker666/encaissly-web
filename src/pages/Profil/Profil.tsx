@@ -9,6 +9,13 @@ import { getErrorMessage } from "@/lib/errors";
 import type { Boutique } from "@/types";
 import DuoModeToggle from "@/components/DuoModeToggle";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Button from "@/components/Button";
+import Card from "@/components/Card";
+import Badge from "@/components/Badge";
+import Avatar from "@/components/Avatar";
+import Banner from "@/components/Banner";
+import Notice from "@/components/Notice";
+import { fieldControl } from "@/components/Field";
 import styles from "./Profil.module.css";
 
 interface Evenement {
@@ -165,41 +172,44 @@ export default function Profil() {
     navigate("/login", { replace: true });
   }
 
-  const initiales = [user?.prenom?.[0], user?.nom?.[0]].filter(Boolean).join("").toUpperCase() || user?.email?.[0]?.toUpperCase() || "?";
   const displayName = [user?.prenom, user?.nom].filter(Boolean).join(" ") || "Mon compte";
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
+      <Card className={styles.header}>
         <button type="button" className={styles.avatarWrap} onClick={() => avatarInputRef.current?.click()} disabled={isUploadingAvatar}>
-          {user?.avatar ? (
-            <img src={user.avatar} alt="" className={styles.avatarImg} />
-          ) : (
-            <div className={styles.avatarPlaceholder}>{initiales}</div>
-          )}
+          <Avatar name={displayName} src={user?.avatar} size="lg" />
           <span className={styles.cameraBtn}>{isUploadingAvatar ? "…" : "📷"}</span>
         </button>
         <input ref={avatarInputRef} type="file" accept="image/*" className={styles.hiddenInput} onChange={handleAvatarChange} />
 
-        <h2 className={styles.name}>{displayName}</h2>
-        <p className={styles.email}>{user?.email}</p>
-        <div className={styles.badgeRow}>
-          <span className={styles.badgePrimary}>{gerante ? "Gérante" : "Créatrice"}</span>
-          {isPlanDuo ? (
-            <span className={styles.badgeDuo}>DUO</span>
-          ) : (
-            <span className={isPlanPro ? styles.badgePro : styles.badgeFree}>{isPlanPro ? "✨ PRO" : "FREE"}</span>
-          )}
+        <div className={styles.identity}>
+          <h1 className={styles.name}>{displayName}</h1>
+          <p className={styles.email}>{user?.email}</p>
+          <div className={styles.badgeRow}>
+            <Badge color="primary" variant="solid">
+              {gerante ? "Gérante" : "Créatrice"}
+            </Badge>
+            {isPlanDuo ? (
+              <Badge color="warning" variant="solid">
+                DUO
+              </Badge>
+            ) : (
+              <Badge color={isPlanPro ? "success" : "neutral"} variant="solid">
+                {isPlanPro ? "✨ PRO" : "FREE"}
+              </Badge>
+            )}
+          </div>
+          {duo && <DuoModeToggle />}
         </div>
-        {duo && <DuoModeToggle />}
-      </div>
+      </Card>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
+      {error && <Banner variant="error">{error}</Banner>}
 
       {!gerante && (
-        <>
-          <h3 className={styles.sectionTitle}>Mes événements</h3>
-          <div className={styles.card}>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Mes événements</h2>
+          <Card>
             {mesEvenements.map((ev, i) => (
               <div key={ev.id}>
                 {i > 0 && <div className={styles.divider} />}
@@ -229,211 +239,222 @@ export default function Profil() {
 
             {canCreateEvent ? (
               creatingEvent ? (
-                <form onSubmit={handleCreerEvenement}>
+                <form onSubmit={handleCreerEvenement} className={styles.inlineForm}>
                   <label className={styles.infoLabel} htmlFor="nomEvenement">
                     Nom de l'événement
                   </label>
                   <input
                     id="nomEvenement"
-                    className={styles.editInput}
-                    style={{ textAlign: "left", width: "100%", marginTop: 6 }}
+                    className={fieldControl}
                     value={nomEvenement}
                     onChange={(e) => setNomEvenement(e.target.value)}
                     placeholder="Ex : Marché de Noël 2026"
                     autoFocus
                   />
                   <div className={styles.editActions}>
-                    <button
+                    <Button
                       type="button"
-                      className={styles.cancelBtn}
+                      variant="secondary"
+                      fullWidth
                       onClick={() => {
                         setCreatingEvent(false);
                         setNomEvenement("");
                       }}
                     >
                       Annuler
-                    </button>
-                    <button type="submit" className={styles.saveBtn} disabled={!nomEvenement.trim() || creatingEventPending}>
+                    </Button>
+                    <Button type="submit" fullWidth disabled={!nomEvenement.trim() || creatingEventPending}>
                       {creatingEventPending ? "…" : "Créer"}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               ) : (
-                <button type="button" className={styles.editBtn} onClick={() => setCreatingEvent(true)}>
+                <Button variant="secondary" fullWidth onClick={() => setCreatingEvent(true)}>
                   + Créer un événement
-                </button>
+                </Button>
               )
             ) : (
-              <p className={styles.notice} style={{ margin: 0 }}>
-                🔒 Plan FREE · 1 événement max. Passe à PRO pour en créer davantage.
-              </p>
+              <Notice>🔒 Plan FREE · 1 événement max. Passe à PRO pour en créer davantage.</Notice>
             )}
-          </div>
-        </>
+          </Card>
+        </section>
       )}
 
-      <h3 className={styles.sectionTitle}>Mon compte</h3>
-      <div className={styles.card}>
-        <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>Email</span>
-          <span className={styles.infoValue}>{user?.email ?? "—"}</span>
-        </div>
-        <div className={styles.divider} />
-        {isEditing ? (
-          <>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Prénom</span>
-              <input className={styles.editInput} value={editPrenom} onChange={(e) => setEditPrenom(e.target.value)} placeholder="Ton prénom" />
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Nom</span>
-              <input className={styles.editInput} value={editNom} onChange={(e) => setEditNom(e.target.value)} placeholder="Ton nom" />
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.editActions}>
-              <button type="button" className={styles.cancelBtn} onClick={handleCancelEdit}>
-                Annuler
-              </button>
-              <button type="button" className={styles.saveBtn} onClick={() => saveProfile()} disabled={isSaving}>
-                {isSaving ? "…" : "Enregistrer"}
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Prénom</span>
-              <span className={styles.infoValue}>{user?.prenom || "—"}</span>
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Nom</span>
-              <span className={styles.infoValue}>{user?.nom || "—"}</span>
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Depuis</span>
-              <span className={styles.infoValue}>{user?.createdAt ? formatDateLong(user.createdAt) : "—"}</span>
-            </div>
-            <div className={styles.divider} />
-            <button type="button" className={styles.editBtn} onClick={() => setIsEditing(true)}>
-              ✏️ Modifier le nom / prénom
-            </button>
-          </>
-        )}
-      </div>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Mon compte</h2>
+        <Card>
+          <div className={styles.infoRow}>
+            <span className={styles.infoLabel}>Email</span>
+            <span className={styles.infoValue}>{user?.email ?? "—"}</span>
+          </div>
+          <div className={styles.divider} />
+          {isEditing ? (
+            <>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Prénom</span>
+                <input className={styles.editInput} value={editPrenom} onChange={(e) => setEditPrenom(e.target.value)} placeholder="Ton prénom" />
+              </div>
+              <div className={styles.divider} />
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Nom</span>
+                <input className={styles.editInput} value={editNom} onChange={(e) => setEditNom(e.target.value)} placeholder="Ton nom" />
+              </div>
+              <div className={styles.divider} />
+              <div className={styles.editActions}>
+                <Button variant="secondary" fullWidth onClick={handleCancelEdit}>
+                  Annuler
+                </Button>
+                <Button fullWidth onClick={() => saveProfile()} disabled={isSaving}>
+                  {isSaving ? "…" : "Enregistrer"}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Prénom</span>
+                <span className={styles.infoValue}>{user?.prenom || "—"}</span>
+              </div>
+              <div className={styles.divider} />
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Nom</span>
+                <span className={styles.infoValue}>{user?.nom || "—"}</span>
+              </div>
+              <div className={styles.divider} />
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Depuis</span>
+                <span className={styles.infoValue}>{user?.createdAt ? formatDateLong(user.createdAt) : "—"}</span>
+              </div>
+              <div className={styles.divider} />
+              <Button variant="secondary" fullWidth onClick={() => setIsEditing(true)}>
+                ✏️ Modifier le nom / prénom
+              </Button>
+            </>
+          )}
+        </Card>
+      </section>
 
-      <h3 className={styles.sectionTitle}>Préférences</h3>
-      <div className={styles.card}>
-        <label className={styles.switchRow}>
-          <div>
-            <div className={styles.switchLabel}>Notifications email</div>
-            <div className={styles.switchDesc}>Reçois un email à chaque vente enregistrée</div>
-          </div>
-          <input
-            type="checkbox"
-            checked={user?.notificationsEmail ?? false}
-            onChange={(e) => toggleNotif(e.target.checked)}
-            disabled={isTogglingNotif}
-          />
-        </label>
-      </div>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Préférences</h2>
+        <Card>
+          <label className={styles.switchRow}>
+            <div>
+              <div className={styles.switchLabel}>Notifications email</div>
+              <div className={styles.switchDesc}>Reçois un email à chaque vente enregistrée</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={user?.notificationsEmail ?? false}
+              onChange={(e) => toggleNotif(e.target.checked)}
+              disabled={isTogglingNotif}
+            />
+          </label>
+        </Card>
+      </section>
 
-      <h3 className={styles.sectionTitle}>Abonnement</h3>
-      <div className={styles.card}>
-        {isPlanDuo ? (
-          <div className={styles.planBlock}>
-            <div className={styles.planHeader}>
-              <span className={styles.planTitleDuo}>DUO</span>
-              <span className={styles.activeBadgeDuo}>Actif</span>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Abonnement</h2>
+        <Card>
+          {isPlanDuo ? (
+            <div className={styles.planBlock}>
+              <div className={styles.planHeader}>
+                <span className={styles.planTitleDuo}>DUO</span>
+                <Badge color="warning">Actif</Badge>
+              </div>
+              <p className={styles.planDesc}>Boutique + Créatrice · Multi-boutiques · Stats avancées · Historique complet</p>
+              <div className={styles.divider} />
+              <Button variant="link" style={{ color: "var(--color-error)" }} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
+                {isCancelling ? "Résiliation en cours…" : "Résilier l'abonnement"}
+              </Button>
             </div>
-            <p className={styles.planDesc}>Boutique + Créatrice · Multi-boutiques · Stats avancées · Historique complet</p>
-            <div className={styles.divider} />
-            <button type="button" className={styles.resilierBtn} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
-              {isCancelling ? "Résiliation en cours…" : "Résilier l'abonnement"}
-            </button>
-          </div>
-        ) : isPlanPro ? (
-          <div className={styles.planBlock}>
-            <div className={styles.planHeader}>
-              <span className={styles.planTitle}>✨ Plan PRO</span>
-              <span className={styles.activeBadge}>Actif</span>
+          ) : isPlanPro ? (
+            <div className={styles.planBlock}>
+              <div className={styles.planHeader}>
+                <span className={styles.planTitle}>✨ Plan PRO</span>
+                <Badge color="success">Actif</Badge>
+              </div>
+              <p className={styles.planDesc}>Multi-boutiques · Stats avancées · Historique complet · Exports illimités sans filigrane</p>
+              <div className={styles.divider} />
+              <Button variant="link" style={{ color: "var(--color-error)" }} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
+                {isCancelling ? "Résiliation en cours…" : "Résilier l'abonnement"}
+              </Button>
             </div>
-            <p className={styles.planDesc}>Multi-boutiques · Stats avancées · Historique complet · Exports illimités sans filigrane</p>
-            <div className={styles.divider} />
-            <button type="button" className={styles.resilierBtn} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
-              {isCancelling ? "Résiliation en cours…" : "Résilier l'abonnement"}
-            </button>
-          </div>
-        ) : duo ? (
-          <div className={styles.freeBlock}>
-            <p className={styles.freeTitle}>Plan FREE</p>
-            <p className={styles.freeDesc}>Accède aux fonctionnalités Gérante ET Créatrice avec un seul abonnement DUO.</p>
-            <div className={styles.divider} />
-            <p className={styles.upgradeLabel}>Débloque tout avec DUO</p>
-            <ul className={styles.featureList}>
-              <li>Gérante + Créatrice sur un seul compte</li>
-              <li>Multi-boutiques · Stats avancées</li>
-              <li>Historique complet · Exports illimités</li>
-            </ul>
-            <div className={styles.periodToggle}>
-              <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")}>
-                Mensuel · 15€
-              </button>
-              <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")}>
-                Annuel · 129€ 🏷️
-              </button>
+          ) : duo ? (
+            <div className={styles.freeBlock}>
+              <p className={styles.freeTitle}>Plan FREE</p>
+              <p className={styles.freeDesc}>Accède aux fonctionnalités Gérante ET Créatrice avec un seul abonnement DUO.</p>
+              <div className={styles.divider} />
+              <p className={styles.upgradeLabel}>Débloque tout avec DUO</p>
+              <ul className={styles.featureList}>
+                <li>Gérante + Créatrice sur un seul compte</li>
+                <li>Multi-boutiques · Stats avancées</li>
+                <li>Historique complet · Exports illimités</li>
+              </ul>
+              <div className={styles.periodToggle}>
+                <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")}>
+                  Mensuel · 15€
+                </button>
+                <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")}>
+                  Annuel · 129€ 🏷️
+                </button>
+              </div>
+              <Button fullWidth style={{ background: "#eb7f45" }} onClick={() => upgradeDuo()} disabled={isUpgradingDuo}>
+                {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 129€/an" : "Passer en DUO — 15€/mois"}
+              </Button>
             </div>
-            <button type="button" className={styles.duoBtn} onClick={() => upgradeDuo()} disabled={isUpgradingDuo}>
-              {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 129€/an" : "Passer en DUO — 15€/mois"}
-            </button>
-          </div>
-        ) : (
-          <div className={styles.freeBlock}>
-            <p className={styles.freeTitle}>Plan FREE</p>
-            <p className={styles.freeDesc}>1 boutique · 3 créatrices max · Historique 1 mois · Export PDF avec filigrane</p>
-            <div className={styles.divider} />
-            <p className={styles.upgradeLabel}>Débloque tout avec PRO</p>
-            <ul className={styles.featureList}>
-              <li>Multi-boutiques</li>
-              <li>Historique complet (3 mois+)</li>
-              <li>Stats avancées par créatrice</li>
-              <li>CSV &amp; Excel sans limite</li>
-              <li>PDF sans filigrane</li>
-            </ul>
-            <div className={styles.periodToggle}>
-              <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")}>
-                Mensuel · 9€
-              </button>
-              <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")}>
-                Annuel · 79€ 🏷️
-              </button>
+          ) : (
+            <div className={styles.freeBlock}>
+              <p className={styles.freeTitle}>Plan FREE</p>
+              <p className={styles.freeDesc}>1 boutique · 3 créatrices max · Historique 1 mois · Export PDF avec filigrane</p>
+              <div className={styles.divider} />
+              <p className={styles.upgradeLabel}>Débloque tout avec PRO</p>
+              <ul className={styles.featureList}>
+                <li>Multi-boutiques</li>
+                <li>Historique complet (3 mois+)</li>
+                <li>Stats avancées par créatrice</li>
+                <li>CSV &amp; Excel sans limite</li>
+                <li>PDF sans filigrane</li>
+              </ul>
+              <div className={styles.periodToggle}>
+                <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")}>
+                  Mensuel · 9€
+                </button>
+                <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")}>
+                  Annuel · 79€ 🏷️
+                </button>
+              </div>
+              <Button fullWidth onClick={() => upgradePro()} disabled={isUpgradingPro}>
+                ⭐ {isUpgradingPro ? "Ouverture…" : billingPeriod === "annual" ? "Passer à PRO — 79€/an" : "Passer à PRO — 9€/mois"}
+              </Button>
             </div>
-            <button type="button" className={styles.upgradeBtn} onClick={() => upgradePro()} disabled={isUpgradingPro}>
-              ⭐ {isUpgradingPro ? "Ouverture…" : billingPeriod === "annual" ? "Passer à PRO — 79€/an" : "Passer à PRO — 9€/mois"}
-            </button>
-          </div>
-        )}
-      </div>
+          )}
+        </Card>
+      </section>
 
-      <h3 className={styles.sectionTitle}>Aide</h3>
-      <div className={styles.card}>
-        <button type="button" className={styles.editBtn} style={{ marginBottom: 8 }} onClick={() => navigate("/aide")}>
-          📖 Guide complet
-        </button>
-        <a className={styles.legalLink} href="/legal" target="_blank" rel="noreferrer">
-          📄 CGU &amp; Politique de confidentialité
-        </a>
-      </div>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Aide</h2>
+        <Card className={styles.helpCard}>
+          <Button variant="secondary" fullWidth onClick={() => navigate("/aide")}>
+            📖 Guide complet
+          </Button>
+          <a className={styles.legalLink} href="/legal" target="_blank" rel="noreferrer">
+            📄 CGU &amp; Politique de confidentialité
+          </a>
+        </Card>
+      </section>
 
-      <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
+      <Button variant="dangerOutline" fullWidth onClick={handleLogout}>
         🚪 Se déconnecter
-      </button>
+      </Button>
 
-      <button type="button" className={styles.deleteAccountBtn} onClick={() => setDeleteStep("first")} disabled={isDeletingAccount}>
+      <Button
+        variant="link"
+        style={{ color: "var(--color-text-light)", textDecoration: "underline", margin: "0 auto" }}
+        onClick={() => setDeleteStep("first")}
+        disabled={isDeletingAccount}
+      >
         {isDeletingAccount ? "Suppression en cours…" : "Supprimer mon compte"}
-      </button>
+      </Button>
 
       <p className={styles.footer}>Encaissly · La caisse intelligente des boutiques de créateurs</p>
 
