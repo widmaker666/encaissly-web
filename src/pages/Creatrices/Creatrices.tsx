@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { creatriceService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { isDuo, isGerante, FREE_LIMITS } from "@/lib/access";
@@ -34,16 +34,8 @@ export default function Creatrices() {
   const atFreeLimit = user?.plan === "FREE" && count >= FREE_LIMITS.maxCreatrices;
 
   if (!gerante) {
-    return (
-      <div>
-        <h2>Créatrices</h2>
-        {isDuo(user) && <DuoModeToggle />}
-        <p className={styles.notice}>
-          Ton suivi personnel (fiche, ventes, articles) arrive à l'étape 2 sur le web. En attendant, retrouve-le sur
-          l'appli mobile.
-        </p>
-      </div>
-    );
+    // Gestion d'autres créatrices n'a pas de sens pour une créatrice — son suivi perso est déjà sur le Dashboard.
+    return <Navigate to="/" replace />;
   }
 
   return (

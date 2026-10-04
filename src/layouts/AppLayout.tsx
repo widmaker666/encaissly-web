@@ -2,13 +2,13 @@ import { NavLink, Outlet, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { notificationService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { isDuo } from "@/lib/access";
+import { isDuo, isGerante } from "@/lib/access";
 import styles from "./AppLayout.module.css";
 
 const NAV_ITEMS = [
   { to: "/", label: "Tableau de bord" },
   { to: "/ventes", label: "Ventes" },
-  { to: "/creatrices", label: "Créatrices" },
+  { to: "/creatrices", label: "Créatrices", gerante: true },
   { to: "/stats", label: "Stats" },
   { to: "/notifications", label: "Notifications" },
   { to: "/profil", label: "Profil" },
@@ -18,7 +18,10 @@ const NAV_ITEMS = [
 export default function AppLayout() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
+  const duoMode = useAuthStore((s) => s.duoMode);
   const logout = useAuthStore((s) => s.logout);
+  const gerante = isGerante(user, duoMode);
+  const navItems = NAV_ITEMS.filter((item) => !item.gerante || gerante);
 
   // Même intervalle que le mobile (badge cloche du Dashboard) — reste à jour
   // sans que la personne ait besoin d'ouvrir l'onglet Notifications.
@@ -40,7 +43,7 @@ export default function AppLayout() {
         <h1 className={styles.logo}>Encaissly</h1>
 
         <nav className={styles.nav}>
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
