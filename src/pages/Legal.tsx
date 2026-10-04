@@ -27,7 +27,7 @@ const SECTIONS: { title: string; body: string }[] = [
   },
   {
     title: "6. Vos droits (RGPD)",
-    body: "Conformément au RGPD, vous disposez des droits suivants :\n• Accès à vos données\n• Rectification de vos données\n• Suppression de votre compte\n• Portabilité de vos données\n• Opposition au traitement\n\nPour exercer ces droits, contactez-nous à : support@encaissly.fr",
+    body: "Conformément au RGPD, vous disposez des droits suivants :\n• Accès à vos données\n• Rectification de vos données\n• Suppression de votre compte\n• Portabilité de vos données\n• Opposition au traitement\n\nPour exercer ces droits, contactez-nous à : contact.encaissly@gmail.com",
   },
   {
     title: "7. Cookies et tracking",
@@ -43,7 +43,7 @@ const SECTIONS: { title: string; body: string }[] = [
   },
   {
     title: "10. Contact",
-    body: "Pour toute question relative à vos données ou à ces conditions :\nEmail : support@encaissly.fr",
+    body: "Pour toute question relative à vos données ou à ces conditions :\nEmail : contact.encaissly@gmail.com",
   },
 ];
 
