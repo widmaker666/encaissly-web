@@ -1,0 +1,15 @@
+.avatar {
+  border-radius: var(--radius-md);
+  color: white;
+  font-family: var(--font-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarImg {
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+}

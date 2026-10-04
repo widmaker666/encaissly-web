@@ -1,0 +1,7 @@
+.notice {
+  color: var(--color-text-light);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin: 0;
+}

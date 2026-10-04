@@ -1,0 +1,15 @@
+.banner {
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: var(--size-sm);
+}
+
+.success {
+  background: var(--color-success-tint);
+  color: #00816a;
+}
+
+.error {
+  background: var(--color-error-tint);
+  color: var(--color-error);
+}

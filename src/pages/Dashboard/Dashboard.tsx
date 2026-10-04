@@ -7,9 +7,16 @@ import { isDuo, isGerante } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
 import { formatDate } from "@/lib/date";
 import { getErrorMessage } from "@/lib/errors";
-import type { Boutique, Vente } from "@/types";
+import type { Boutique, ModePaiement, Vente } from "@/types";
 import DuoModeToggle from "@/components/DuoModeToggle";
 import VentesExportButtons from "@/components/VentesExportButtons";
+import Card, { CardButton } from "@/components/Card";
+import Button from "@/components/Button";
+import Badge from "@/components/Badge";
+import Notice from "@/components/Notice";
+import Avatar from "@/components/Avatar";
+import Table, { type Column } from "@/components/Table";
+import { InputField } from "@/components/Field";
 import styles from "./Dashboard.module.css";
 
 interface BoutiqueAvecStats {
@@ -24,6 +31,29 @@ interface EvenementAvecVentes {
   nom: string;
   dateDebut: string;
   ventes?: { prixVente: number }[];
+}
+
+const paiementColor: Record<ModePaiement, "info" | "warning"> = {
+  CARTE: "info",
+  ESPECES: "warning",
+};
+
+function venteColumns(showCreatrice: boolean): Column<Vente>[] {
+  const cols: Column<Vente>[] = [
+    { key: "article", header: "Article", render: (v) => v.nomArticle },
+  ];
+  if (showCreatrice) {
+    cols.push({ key: "creatrice", header: "Créatrice", render: (v) => v.creatrice?.nom ?? "—" });
+  }
+  cols.push(
+    {
+      key: "mode",
+      header: "Mode",
+      render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge>,
+    },
+    { key: "prix", header: "Prix", align: "right", render: (v) => formatMontant(v.prixVente) },
+  );
+  return cols;
 }
 
 export default function Dashboard() {
@@ -86,11 +116,13 @@ export default function Dashboard() {
     const boutiquesMembre = mesBoutiquesMembre ?? [];
 
     return (
-      <div>
-        <h2>Bonjour {nomAffiche}</h2>
-        {isDuo(user) && <DuoModeToggle />}
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Bonjour {nomAffiche}</h1>
+          {isDuo(user) && <DuoModeToggle />}
+        </div>
 
-        <div className={styles.howCard}>
+        <Card className={styles.howCard}>
           <p className={styles.howTitle}>Comment vendre ?</p>
           <div className={styles.howStep}>
             <span className={styles.howBullet}>1</span>
@@ -106,166 +138,150 @@ export default function Dashboard() {
             <span className={styles.howBullet}>3</span>
             <span>Choisis tes articles et le mode de paiement</span>
           </div>
-        </div>
+        </Card>
 
-        <h3 className={styles.sectionTitle}>Mes événements ({evenements.length})</h3>
-        {loadingEvenements ? (
-          <p className={styles.notice}>Chargement…</p>
-        ) : evenements.length === 0 ? (
-          <p className={styles.notice}>
-            Aucun événement — crée-en un depuis ton <a href="/profil">profil</a> pour pouvoir vendre.
-          </p>
-        ) : (
-          <div className={styles.boutiquesGrid}>
-            {evenements.map((e) => {
-              const ca = (e.ventes ?? []).reduce((acc, v) => acc + v.prixVente, 0);
-              const nb = e.ventes?.length ?? 0;
-              return (
-                <button
-                  key={e.id}
-                  type="button"
-                  className={styles.boutiqueCard}
-                  onClick={() => navigate(`/evenements/${e.id}?nom=${encodeURIComponent(e.nom)}`)}
-                >
-                  <div className={styles.boutiqueNom}>{e.nom}</div>
-                  <div className={styles.boutiqueMeta}>
-                    {formatDate(e.dateDebut)} · {nb} vente{nb > 1 ? "s" : ""} · {formatMontant(ca)}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Mes événements ({evenements.length})</h2>
+          {loadingEvenements ? (
+            <Notice>Chargement…</Notice>
+          ) : evenements.length === 0 ? (
+            <Notice>
+              Aucun événement — crée-en un depuis ton <a href="/profil">profil</a> pour pouvoir vendre.
+            </Notice>
+          ) : (
+            <div className={styles.grid}>
+              {evenements.map((e) => {
+                const ca = (e.ventes ?? []).reduce((acc, v) => acc + v.prixVente, 0);
+                const nb = e.ventes?.length ?? 0;
+                return (
+                  <CardButton
+                    key={e.id}
+                    onClick={() => navigate(`/evenements/${e.id}?nom=${encodeURIComponent(e.nom)}`)}
+                  >
+                    <div className={styles.cardTitle}>{e.nom}</div>
+                    <div className={styles.cardMeta}>
+                      {formatDate(e.dateDebut)} · {nb} vente{nb > 1 ? "s" : ""} · {formatMontant(ca)}
+                    </div>
+                  </CardButton>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
         {boutiquesMembre.length > 0 && (
-          <>
-            <h3 className={styles.sectionTitle}>Mes boutiques ({boutiquesMembre.length})</h3>
-            <div className={styles.boutiquesGrid}>
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Mes boutiques ({boutiquesMembre.length})</h2>
+            <div className={styles.grid}>
               {boutiquesMembre.map((b) => (
-                <button
-                  key={b.id}
-                  type="button"
-                  className={styles.boutiqueCard}
-                  onClick={() => navigate(`/mes-ventes/${b.id}?nom=${encodeURIComponent(b.nom)}`)}
-                >
-                  <div className={styles.boutiqueNom}>{b.nom}</div>
-                  <div className={styles.boutiqueMeta}>Voir mes ventes ›</div>
-                </button>
+                <CardButton key={b.id} onClick={() => navigate(`/mes-ventes/${b.id}?nom=${encodeURIComponent(b.nom)}`)}>
+                  <div className={styles.cardRow}>
+                    <Avatar name={b.nom} size="sm" />
+                    <div>
+                      <div className={styles.cardTitle}>{b.nom}</div>
+                      <div className={styles.cardMeta}>Voir mes ventes ›</div>
+                    </div>
+                  </div>
+                </CardButton>
               ))}
             </div>
-          </>
+          </section>
         )}
 
-        <h3 className={styles.sectionTitle}>Dernières ventes</h3>
-        {recentVentes && recentVentes.length > 0 ? (
-          <div className={styles.ventesList}>
-            {recentVentes.map((v) => (
-              <div key={v.id} className={styles.venteRow}>
-                <div>
-                  <div className={styles.venteNom}>{v.nomArticle}</div>
-                  <div className={styles.venteMeta}>{v.modePaiement}</div>
-                </div>
-                <div className={styles.ventePrix}>{formatMontant(v.prixVente)}</div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className={styles.notice}>Aucune vente pour l'instant.</p>
-        )}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Dernières ventes</h2>
+          {recentVentes && recentVentes.length > 0 ? (
+            <Table rowKey={(v) => v.id} columns={venteColumns(false)} rows={recentVentes} />
+          ) : (
+            <Notice>Aucune vente pour l'instant.</Notice>
+          )}
+        </section>
       </div>
     );
   }
 
   return (
-    <div>
-      <h2>Bonjour {nomAffiche}</h2>
-      <p className={styles.subtitle}>
-        {user?.role} · {user?.plan}
-      </p>
-      {isDuo(user) && <DuoModeToggle />}
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <div>
+          <span className={styles.eyebrow}>{user?.role}</span>
+          <h1 className={styles.title}>Bonjour {nomAffiche}</h1>
+        </div>
+        {isDuo(user) && <DuoModeToggle />}
+        {!isDuo(user) && <Badge color={user?.plan === "FREE" ? "neutral" : "success"}>{user?.plan}</Badge>}
+      </div>
 
-      <h3 className={styles.sectionTitle}>Mes boutiques</h3>
-      {liste.length === 0 ? (
-        <div className={styles.emptyCard}>
-          {!creatingBoutique ? (
-            <>
-              <p>Tu n'as pas encore de boutique.</p>
-              <button type="button" className={styles.primaryBtn} onClick={() => setCreatingBoutique(true)}>
-                Créer ma première boutique
-              </button>
-            </>
-          ) : (
-            <form onSubmit={handleCreerBoutique} className={styles.boutiqueForm}>
-              <input
-                className={styles.input}
-                value={nomBoutique}
-                onChange={(e) => setNomBoutique(e.target.value)}
-                placeholder="Ex. : Atelier Lumière"
-                autoFocus
-              />
-              {error && <p className={styles.error}>{error}</p>}
-              <div className={styles.formRow}>
-                <button
-                  type="button"
-                  className={styles.cancelBtn}
-                  onClick={() => {
-                    setCreatingBoutique(false);
-                    setNomBoutique("");
-                    setError(null);
-                  }}
-                >
-                  Annuler
-                </button>
-                <button type="submit" className={styles.primaryBtn} disabled={!nomBoutique.trim() || creatingPending}>
-                  {creatingPending ? "Création…" : "Créer"}
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-      ) : (
-        <div className={styles.boutiquesGrid}>
-          {liste.map((b) => (
-            <button
-              key={b.id}
-              type="button"
-              className={styles.boutiqueCard}
-              onClick={() => navigate(`/boutiques/${b.id}?nom=${encodeURIComponent(b.nom)}`)}
-            >
-              <div className={styles.boutiqueNom}>{b.nom}</div>
-              <div className={styles.boutiqueMeta}>
-                {b.nbCreatrices} créatrice{b.nbCreatrices !== 1 ? "s" : ""} · {formatMontant(b.ca)}
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Mes boutiques</h2>
+        {liste.length === 0 ? (
+          <Card className={styles.emptyCard}>
+            {!creatingBoutique ? (
+              <>
+                <p className={styles.emptyText}>Tu n'as pas encore de boutique.</p>
+                <Button onClick={() => setCreatingBoutique(true)}>Créer ma première boutique</Button>
+              </>
+            ) : (
+              <form onSubmit={handleCreerBoutique} className={styles.form}>
+                <InputField
+                  value={nomBoutique}
+                  onChange={(e) => setNomBoutique(e.target.value)}
+                  placeholder="Ex. : Atelier Lumière"
+                  autoFocus
+                  error={error ?? undefined}
+                />
+                <div className={styles.formRow}>
+                  <Button
+                    variant="secondary"
+                    fullWidth
+                    onClick={() => {
+                      setCreatingBoutique(false);
+                      setNomBoutique("");
+                      setError(null);
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                  <Button type="submit" fullWidth disabled={!nomBoutique.trim() || creatingPending}>
+                    {creatingPending ? "Création…" : "Créer"}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </Card>
+        ) : (
+          <div className={styles.grid}>
+            {liste.map((b) => (
+              <CardButton key={b.id} onClick={() => navigate(`/boutiques/${b.id}?nom=${encodeURIComponent(b.nom)}`)}>
+                <div className={styles.cardRow}>
+                  <Avatar name={b.nom} size="sm" />
+                  <div>
+                    <div className={styles.cardTitle}>{b.nom}</div>
+                    <div className={styles.cardMeta}>
+                      {b.nbCreatrices} créatrice{b.nbCreatrices !== 1 ? "s" : ""} · {formatMontant(b.ca)}
+                    </div>
+                  </div>
+                </div>
+              </CardButton>
+            ))}
+          </div>
+        )}
+      </section>
 
       {liste.length > 0 && (
-        <>
-          <h3 className={styles.sectionTitle}>Récupérer les ventes de la boutique</h3>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Récupérer les ventes de la boutique</h2>
           <VentesExportButtons filenameBase="ventes-boutique" />
-        </>
+        </section>
       )}
 
-      <h3 className={styles.sectionTitle}>Dernières ventes</h3>
-      {recentVentes && recentVentes.length > 0 ? (
-        <div className={styles.ventesList}>
-          {recentVentes.map((v) => (
-            <div key={v.id} className={styles.venteRow}>
-              <div>
-                <div className={styles.venteNom}>{v.nomArticle}</div>
-                <div className={styles.venteMeta}>
-                  {v.creatrice?.nom ?? "—"} · {v.modePaiement}
-                </div>
-              </div>
-              <div className={styles.ventePrix}>{formatMontant(v.prixVente)}</div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className={styles.notice}>Aucune vente pour l'instant.</p>
-      )}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Dernières ventes</h2>
+        {recentVentes && recentVentes.length > 0 ? (
+          <Table rowKey={(v) => v.id} columns={venteColumns(true)} rows={recentVentes} />
+        ) : (
+          <Notice>Aucune vente pour l'instant.</Notice>
+        )}
+      </section>
     </div>
   );
 }

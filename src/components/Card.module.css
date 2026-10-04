@@ -1,0 +1,32 @@
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.pad-sm {
+  padding: var(--space-4);
+}
+
+.pad-md {
+  padding: var(--space-6);
+}
+
+.pad-lg {
+  padding: var(--space-7);
+}
+
+.clickable {
+  display: block;
+  width: 100%;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+.clickable:hover {
+  background: var(--color-surface-hover);
+}

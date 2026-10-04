@@ -1,0 +1,62 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-bold);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+/* Soft : fond teinté, texte foncé — usage par défaut (badges de statut) */
+.soft.primary {
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dark);
+}
+.soft.success {
+  background: var(--color-success-tint);
+  color: #00816a;
+}
+.soft.warning {
+  background: var(--color-warning-tint);
+  color: #9a6a00;
+}
+.soft.error {
+  background: var(--color-error-tint);
+  color: var(--color-error);
+}
+.soft.info {
+  background: var(--color-info-tint);
+  color: var(--color-info);
+}
+.soft.neutral {
+  background: var(--color-background);
+  color: var(--color-text-light);
+}
+
+/* Solid : fond plein coloré, texte blanc — usage rare, mise en avant (ex. plan actif) */
+.solid.primary {
+  background: var(--color-primary);
+  color: white;
+}
+.solid.success {
+  background: #1a7a4a;
+  color: white;
+}
+.solid.warning {
+  background: #eb7f45;
+  color: white;
+}
+.solid.error {
+  background: var(--color-error);
+  color: white;
+}
+.solid.info {
+  background: var(--color-info);
+  color: white;
+}
+.solid.neutral {
+  background: #666;
+  color: white;
+}

@@ -63,6 +63,8 @@
   --color-success-tint: #e3f8f3;
   --color-error-tint: #fdeceb;
   --color-warning-tint: #fdf1dc;
+  --color-info: #4267b2;
+  --color-info-tint: #e0edff;
   --color-focus-ring: rgba(122, 65, 187, 0.35);
 
   --font-title: "Urbanist", sans-serif;
