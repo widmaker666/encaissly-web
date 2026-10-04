@@ -1,47 +1,47 @@
-.backBtn {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-family: var(--font-medium);
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 16px;
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.title {
+  font-size: var(--size-display);
 }
 
 .intro {
   color: var(--color-text-light);
   font-size: var(--size-sm);
   line-height: 1.5;
-  margin: 8px 0 24px;
+  margin: 8px 0 0;
   max-width: 560px;
 }
 
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 .sectionTitle {
-  font-size: var(--size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-light);
-  margin: 20px 0 10px;
+  font-size: var(--size-lg);
+  margin: 0;
 }
 
 .card {
-  background: var(--color-surface);
-  border-radius: 14px;
-  padding: 16px;
   max-width: 640px;
 }
 
 .divider {
   height: 1px;
   background: var(--color-border);
-  margin: 10px 0;
+  margin: var(--space-3) 0;
 }
 
 .itemHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: var(--space-3);
   width: 100%;
   background: none;
   border: none;
@@ -53,31 +53,13 @@
 .itemTitleRow {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   flex: 1;
 }
 
 .itemTitleTxt {
   font-family: var(--font-medium);
   font-size: var(--size-sm);
-}
-
-.badgePro,
-.badgeDuo {
-  border-radius: 8px;
-  padding: 2px 8px;
-  font-family: var(--font-bold);
-  font-size: 10px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.badgePro {
-  background: #1a7a4a;
-}
-
-.badgeDuo {
-  background: #eb7f45;
 }
 
 .chevron {

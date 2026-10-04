@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/stores/auth.store";
 import { isDuo, isGerante } from "@/lib/access";
+import Button from "@/components/Button";
+import Card from "@/components/Card";
+import Badge from "@/components/Badge";
 import styles from "./Aide.module.css";
 
 // Port de encaissly-mobile/pages/Aide — contenu adapté aux parcours web
@@ -141,18 +144,20 @@ export default function Aide() {
   ];
 
   return (
-    <div>
-      <button type="button" className={styles.backBtn} onClick={() => navigate("/profil")}>
+    <div className={styles.page}>
+      <Button variant="link" onClick={() => navigate("/profil")}>
         ‹ Profil
-      </button>
+      </Button>
 
-      <h2>Aide</h2>
-      <p className={styles.intro}>Retrouve ici comment faire les actions essentielles dans Encaissly.</p>
+      <div>
+        <h1 className={styles.title}>Aide</h1>
+        <p className={styles.intro}>Retrouve ici comment faire les actions essentielles dans Encaissly.</p>
+      </div>
 
       {sections.map((section, si) => (
-        <div key={section.title}>
-          <h3 className={styles.sectionTitle}>{section.title}</h3>
-          <div className={styles.card}>
+        <section key={section.title} className={styles.section}>
+          <h2 className={styles.sectionTitle}>{section.title}</h2>
+          <Card className={styles.card}>
             {section.items.map((item, ii) => {
               const key = `${si}-${ii}`;
               const isOpen = openKey === key;
@@ -163,7 +168,9 @@ export default function Aide() {
                     <span className={styles.itemTitleRow}>
                       <span className={styles.itemTitleTxt}>{item.title}</span>
                       {item.badge && (
-                        <span className={item.badge === "PRO" ? styles.badgePro : styles.badgeDuo}>{item.badge}</span>
+                        <Badge color={item.badge === "PRO" ? "success" : "warning"} variant="solid">
+                          {item.badge}
+                        </Badge>
                       )}
                     </span>
                     <span className={styles.chevron}>{isOpen ? "▲" : "▼"}</span>
@@ -172,8 +179,8 @@ export default function Aide() {
                 </div>
               );
             })}
-          </div>
-        </div>
+          </Card>
+        </section>
       ))}
     </div>
   );

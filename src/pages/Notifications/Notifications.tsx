@@ -1,7 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { creatriceService, notificationService } from "@/services/api";
 import { getErrorMessage } from "@/lib/errors";
+import Button from "@/components/Button";
+import Badge from "@/components/Badge";
+import Card from "@/components/Card";
+import Notice from "@/components/Notice";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import styles from "./Notifications.module.css";
 
 // Port de encaissly-mobile/pages/Notifications/index.tsx — même logique
@@ -37,6 +42,7 @@ function getTypeEmoji(type: string): string {
 
 export default function Notifications() {
   const queryClient = useQueryClient();
+  const [confirmClear, setConfirmClear] = useState(false);
 
   const { data: notifications, isLoading } = useQuery<Notification[]>({
     queryKey: ["notifications"],
@@ -52,6 +58,7 @@ export default function Notifications() {
   }, []);
 
   const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
+  const readCount = notifications?.filter((n) => n.read).length ?? 0;
 
   const { mutate: acceptInvitation, isPending: accepting } = useMutation({
     mutationFn: ({ creatriceId, boutiqueId }: { creatriceId: string; boutiqueId: string }) =>
@@ -71,55 +78,82 @@ export default function Notifications() {
     },
   });
 
+  const { mutate: clearRead, isPending: clearing } = useMutation({
+    mutationFn: notificationService.clearRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      setConfirmClear(false);
+    },
+  });
+
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.header}>
-        <h2>Notifications</h2>
-        {unreadCount > 0 && (
-          <button type="button" className={styles.markAllBtn} onClick={() => markAll()} disabled={markingAll}>
-            {markingAll ? "…" : "Tout lire"}
-          </button>
-        )}
+        <h1 className={styles.title}>Notifications</h1>
+        <div className={styles.headerActions}>
+          {readCount > 0 && (
+            <Button variant="dangerOutline" size="sm" onClick={() => setConfirmClear(true)}>
+              Nettoyer les lues
+            </Button>
+          )}
+          {unreadCount > 0 && (
+            <Button size="sm" onClick={() => markAll()} disabled={markingAll}>
+              {markingAll ? "…" : "Tout lire"}
+            </Button>
+          )}
+        </div>
       </div>
 
       {isLoading ? (
-        <p className={styles.notice}>Chargement…</p>
+        <Notice>Chargement…</Notice>
       ) : !notifications || notifications.length === 0 ? (
-        <p className={styles.notice}>🔔 Aucune notification pour l'instant.</p>
+        <Notice>🔔 Aucune notification pour l'instant.</Notice>
       ) : (
         <div className={styles.list}>
           {notifications.map((notif) => (
-            <div key={notif.id} className={notif.read ? styles.card : `${styles.card} ${styles.cardUnread}`}>
-              <div className={notif.read ? styles.dotRead : styles.dotUnread} />
-              <div className={styles.content}>
-                <div className={styles.top}>
-                  <span className={styles.typeBadge}>
-                    {getTypeEmoji(notif.type)} {notif.type}
-                  </span>
-                  <span className={styles.date}>{formatRelative(notif.createdAt)}</span>
-                </div>
-                <p className={notif.read ? `${styles.message} ${styles.messageRead}` : styles.message}>{notif.message}</p>
-
-                {notif.type === "INVITATION_BOUTIQUE" && notif.metadata?.creatriceId && (
-                  <div className={styles.actionRow}>
-                    <span className={styles.inviteTxt}>Boutique : {notif.metadata.boutiqueName}</span>
-                    <button
-                      type="button"
-                      className={styles.joinBtn}
-                      disabled={accepting}
-                      onClick={() =>
-                        acceptInvitation({ creatriceId: notif.metadata!.creatriceId!, boutiqueId: notif.metadata!.boutiqueId ?? "" })
-                      }
-                    >
-                      Rejoindre
-                    </button>
+            <Card key={notif.id} padding="sm" className={notif.read ? styles.card : `${styles.card} ${styles.cardUnread}`}>
+              <div className={styles.cardInner}>
+                <div className={notif.read ? styles.dotRead : styles.dotUnread} />
+                <div className={styles.content}>
+                  <div className={styles.top}>
+                    <Badge color={notif.read ? "neutral" : "primary"}>
+                      {getTypeEmoji(notif.type)} {notif.type}
+                    </Badge>
+                    <span className={styles.date}>{formatRelative(notif.createdAt)}</span>
                   </div>
-                )}
+                  <p className={notif.read ? `${styles.message} ${styles.messageRead}` : styles.message}>{notif.message}</p>
+
+                  {notif.type === "INVITATION_BOUTIQUE" && notif.metadata?.creatriceId && (
+                    <div className={styles.actionRow}>
+                      <span className={styles.inviteTxt}>Boutique : {notif.metadata.boutiqueName}</span>
+                      <Button
+                        size="sm"
+                        disabled={accepting}
+                        onClick={() =>
+                          acceptInvitation({ creatriceId: notif.metadata!.creatriceId!, boutiqueId: notif.metadata!.boutiqueId ?? "" })
+                        }
+                      >
+                        Rejoindre
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmClear}
+        title="Nettoyer les notifications lues"
+        message={`Supprimer définitivement ${readCount} notification${readCount > 1 ? "s" : ""} déjà lue${readCount > 1 ? "s" : ""} ? Les non lues restent intactes.`}
+        confirmLabel="Nettoyer"
+        danger
+        pending={clearing}
+        onConfirm={() => clearRead()}
+        onCancel={() => setConfirmClear(false)}
+      />
     </div>
   );
 }
