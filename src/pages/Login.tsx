@@ -4,6 +4,9 @@ import { authService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { getErrorMessage } from "@/lib/errors";
 import { loadGoogleScript } from "@/lib/google";
+import Button from "@/components/Button";
+import { InputField } from "@/components/Field";
+import Banner from "@/components/Banner";
 import styles from "./Login.module.css";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -90,12 +93,9 @@ export default function Login() {
         <p className={styles.subtitle}>Connecte-toi pour accéder à ta compta.</p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          <label className={styles.label} htmlFor="email">
-            Email
-          </label>
-          <input
+          <InputField
+            label="Email"
             id="email"
-            className={styles.input}
             type="email"
             autoComplete="email"
             value={email}
@@ -103,12 +103,9 @@ export default function Login() {
             required
           />
 
-          <label className={styles.label} htmlFor="password">
-            Mot de passe
-          </label>
-          <input
+          <InputField
+            label="Mot de passe"
             id="password"
-            className={styles.input}
             type="password"
             autoComplete="current-password"
             value={password}
@@ -116,11 +113,11 @@ export default function Login() {
             required
           />
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <Banner variant="error">{error}</Banner>}
 
-          <button className={styles.submit} type="submit" disabled={loading || googleLoading}>
+          <Button type="submit" fullWidth disabled={loading || googleLoading}>
             {loading ? "Connexion…" : "Se connecter"}
-          </button>
+          </Button>
         </form>
 
         {GOOGLE_CLIENT_ID && (

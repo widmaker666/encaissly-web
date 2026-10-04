@@ -3,16 +3,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 16px;
+  padding: var(--space-7) var(--space-4);
 }
 
 .card {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   background: var(--color-surface);
-  border-radius: 16px;
-  padding: 32px 28px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-7);
+  box-shadow: var(--shadow-md);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .title {
@@ -24,39 +30,13 @@
 .subtitle {
   color: var(--color-text-light);
   text-align: center;
-  margin: 8px 0 24px;
+  margin: 8px 0 var(--space-4);
   font-size: var(--size-sm);
-}
-
-.backBtn {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-family: var(--font-medium);
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 12px;
 }
 
 .googleBtn {
   display: flex;
   justify-content: center;
-  margin-bottom: 12px;
-}
-
-.emailBtn {
-  width: 100%;
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 12px;
-  font-family: var(--font-bold);
-  cursor: pointer;
-}
-
-.emailBtn:hover {
-  background: var(--color-primary-dark);
 }
 
 .lockedRow {
@@ -64,9 +44,8 @@
   justify-content: space-between;
   align-items: center;
   background: var(--color-background);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 10px 14px;
-  margin-bottom: 16px;
   font-size: var(--size-sm);
   color: var(--color-text-light);
 }
@@ -75,20 +54,18 @@
   display: block;
   font-family: var(--font-medium);
   font-size: var(--size-sm);
-  margin-bottom: 6px;
 }
 
 .roleRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: var(--space-3);
 }
 
 .roleCard,
 .roleCardDuo {
   border: 1.5px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--color-surface);
   padding: 14px 10px;
   display: flex;
@@ -103,15 +80,14 @@
   flex-direction: row;
   text-align: left;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   width: 100%;
-  margin-bottom: 16px;
   padding: 12px 14px;
 }
 
 .roleCardSelected {
   border-color: var(--color-primary);
-  background: #faf5ff;
+  background: var(--color-primary-tint);
 }
 
 .roleIcon {
@@ -130,21 +106,12 @@
   color: var(--color-text-light);
 }
 
-.input {
-  width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 14px;
-}
-
 .cguRow {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--space-2);
   font-size: var(--size-xs);
   color: var(--color-text-light);
-  margin: 4px 0 16px;
   cursor: pointer;
 }
 
@@ -156,37 +123,10 @@
   color: var(--color-primary);
 }
 
-.error {
-  color: var(--color-error);
-  font-size: var(--size-sm);
-  margin: 0 0 12px;
-}
-
-.submit {
-  width: 100%;
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 12px;
-  font-family: var(--font-bold);
-  cursor: pointer;
-}
-
-.submit:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.submit:not(:disabled):hover {
-  background: var(--color-primary-dark);
-}
-
 .footer {
   text-align: center;
   font-size: var(--size-sm);
   color: var(--color-text-light);
-  margin: 16px 0 0;
 }
 
 .footer a {

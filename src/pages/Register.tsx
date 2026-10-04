@@ -5,6 +5,9 @@ import { useAuthStore } from "@/stores/auth.store";
 import { getErrorMessage } from "@/lib/errors";
 import { loadGoogleScript } from "@/lib/google";
 import type { Role } from "@/types";
+import Button from "@/components/Button";
+import { InputField } from "@/components/Field";
+import Banner from "@/components/Banner";
 import styles from "./Register.module.css";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -141,27 +144,33 @@ export default function Register() {
     <div className={styles.page}>
       <div className={styles.card}>
         {step === "choice" ? (
-          <>
+          <div className={styles.form}>
             <h1 className={styles.title}>Inscription</h1>
             <p className={styles.subtitle}>Crée ton compte en quelques secondes.</p>
 
-            {error && <p className={styles.error}>{error}</p>}
+            {error && <Banner variant="error">{error}</Banner>}
 
             {GOOGLE_CLIENT_ID && <div className={styles.googleBtn} ref={googleBtnRef} />}
 
-            <button type="button" className={styles.emailBtn} onClick={() => { setMethod("email"); setStep("form"); }}>
+            <Button
+              fullWidth
+              onClick={() => {
+                setMethod("email");
+                setStep("form");
+              }}
+            >
               S'inscrire avec email
-            </button>
+            </Button>
 
             <p className={styles.footer}>
               Déjà un compte ? <Link to="/login">Se connecter</Link>
             </p>
-          </>
+          </div>
         ) : (
-          <form onSubmit={handleSubmit}>
-            <button type="button" className={styles.backBtn} onClick={handleBack}>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <Button variant="link" onClick={handleBack}>
               ‹ Retour
-            </button>
+            </Button>
             <h1 className={styles.title}>{method === "google" ? "Finaliser l'inscription" : "Inscription"}</h1>
             <p className={styles.subtitle}>
               {method === "google" ? "Il ne reste que quelques infos à compléter." : "Crée ton compte."}
@@ -174,7 +183,7 @@ export default function Register() {
               </div>
             )}
 
-            <label className={styles.label}>Je suis…</label>
+            <span className={styles.label}>Je suis…</span>
             <div className={styles.roleRow}>
               {ROLES.map((item) => (
                 <button
@@ -202,46 +211,23 @@ export default function Register() {
             </button>
 
             {method === "email" && (
-              <>
-                <label className={styles.label} htmlFor="email">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  className={styles.input}
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </>
+              <InputField label="Email" id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             )}
 
-            <label className={styles.label} htmlFor="prenom">
-              Prénom
-            </label>
-            <input id="prenom" className={styles.input} value={prenom} onChange={(e) => setPrenom(e.target.value)} />
+            <InputField label="Prénom" id="prenom" value={prenom} onChange={(e) => setPrenom(e.target.value)} />
 
-            <label className={styles.label} htmlFor="nom">
-              Nom
-            </label>
-            <input id="nom" className={styles.input} value={nom} onChange={(e) => setNom(e.target.value)} />
+            <InputField label="Nom" id="nom" value={nom} onChange={(e) => setNom(e.target.value)} />
 
             {method === "email" && (
-              <>
-                <label className={styles.label} htmlFor="password">
-                  Mot de passe
-                </label>
-                <input
-                  id="password"
-                  className={styles.input}
-                  type="password"
-                  placeholder="8 caractères min"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </>
+              <InputField
+                label="Mot de passe"
+                id="password"
+                type="password"
+                placeholder="8 caractères min"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             )}
 
             <label className={styles.cguRow}>
@@ -254,11 +240,11 @@ export default function Register() {
               </span>
             </label>
 
-            {error && <p className={styles.error}>{error}</p>}
+            {error && <Banner variant="error">{error}</Banner>}
 
-            <button type="submit" className={styles.submit} disabled={loading || !acceptedCGU}>
+            <Button type="submit" fullWidth disabled={loading || !acceptedCGU}>
               {loading ? "Création…" : "Créer mon compte"}
-            </button>
+            </Button>
 
             <p className={styles.footer}>
               Déjà un compte ? <Link to="/login">Se connecter</Link>

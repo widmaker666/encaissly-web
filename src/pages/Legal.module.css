@@ -29,17 +29,17 @@
 .content {
   max-width: 640px;
   margin: 0 auto;
-  padding: 24px 20px 48px;
+  padding: var(--space-6) var(--space-5) var(--space-9);
 }
 
 .lastUpdate {
   color: var(--color-text-light);
   font-size: var(--size-xs);
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .section {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .sectionTitle {
