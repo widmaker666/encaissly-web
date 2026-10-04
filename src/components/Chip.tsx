@@ -8,5 +8,5 @@ interface ChipProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 /** Filtre cliquable (pill) — remplace .chip/.pill/.modeChip dupliqués dans Ventes/Stats/VenteCreateModal. */
 export default function Chip({ active, className, type = "button", ...rest }: ChipProps) {
   const classes = [styles.chip, active ? styles.active : "", className].filter(Boolean).join(" ");
-  return <button type={type} className={classes} {...rest} />;
+  return <button type={type} className={classes} aria-pressed={active} {...rest} />;
 }

@@ -46,6 +46,7 @@
   color: var(--color-text-light);
   font-family: var(--font-medium);
   font-size: var(--size-sm);
+  white-space: nowrap;
   transition: background 0.15s;
 }
 

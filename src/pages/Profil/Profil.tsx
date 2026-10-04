@@ -177,7 +177,13 @@ export default function Profil() {
   return (
     <div className={styles.page}>
       <Card className={styles.header}>
-        <button type="button" className={styles.avatarWrap} onClick={() => avatarInputRef.current?.click()} disabled={isUploadingAvatar}>
+        <button
+          type="button"
+          className={styles.avatarWrap}
+          onClick={() => avatarInputRef.current?.click()}
+          disabled={isUploadingAvatar}
+          aria-label="Changer la photo de profil"
+        >
           <Avatar name={displayName} src={user?.avatar} size="lg" />
           <span className={styles.cameraBtn}>{isUploadingAvatar ? "…" : "📷"}</span>
         </button>
@@ -391,10 +397,10 @@ export default function Profil() {
                 <li>Historique complet · Exports illimités</li>
               </ul>
               <div className={styles.periodToggle}>
-                <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")}>
+                <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")} aria-pressed={billingPeriod === "monthly"}>
                   Mensuel · 15€
                 </button>
-                <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")}>
+                <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")} aria-pressed={billingPeriod === "annual"}>
                   Annuel · 129€ 🏷️
                 </button>
               </div>
@@ -416,10 +422,10 @@ export default function Profil() {
                 <li>PDF sans filigrane</li>
               </ul>
               <div className={styles.periodToggle}>
-                <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")}>
+                <button type="button" className={billingPeriod === "monthly" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("monthly")} aria-pressed={billingPeriod === "monthly"}>
                   Mensuel · 9€
                 </button>
-                <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")}>
+                <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")} aria-pressed={billingPeriod === "annual"}>
                   Annuel · 79€ 🏷️
                 </button>
               </div>

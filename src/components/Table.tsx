@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
 import styles from "./Table.module.css";
 
 export interface Column<T> {
@@ -40,21 +40,35 @@ export default function Table<T>({ columns, rows, rowKey, onRowClick, sortable }
     setSort((prev) => (prev?.key === col.key ? { key: col.key, dir: prev.dir === 1 ? -1 : 1 } : { key: col.key, dir: 1 }));
   }
 
+  // <tr onClick> n'est ni focusable ni activable au clavier — on lui donne le
+  // comportement d'un bouton (tabIndex + Entrée/Espace) plutôt que de rendre
+  // la ligne inaccessible sans souris.
+  function handleRowKeyDown(e: KeyboardEvent<HTMLTableRowElement>, row: T) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onRowClick?.(row);
+    }
+  }
+
   return (
     <table className={styles.table}>
       <thead>
         <tr>
-          {columns.map((col) => (
-            <th
-              key={col.key}
-              className={col.align === "right" ? styles.right : undefined}
-              onClick={() => toggleSort(col)}
-              style={sortable && col.sortValue ? { cursor: "pointer" } : undefined}
-            >
-              {col.header}
-              {sort?.key === col.key && (sort.dir === 1 ? " ↑" : " ↓")}
-            </th>
-          ))}
+          {columns.map((col) => {
+            const isSortable = sortable && !!col.sortValue;
+            return (
+              <th key={col.key} className={col.align === "right" ? styles.right : undefined}>
+                {isSortable ? (
+                  <button type="button" className={styles.sortBtn} onClick={() => toggleSort(col)}>
+                    {col.header}
+                    {sort?.key === col.key && (sort.dir === 1 ? " ↑" : " ↓")}
+                  </button>
+                ) : (
+                  col.header
+                )}
+              </th>
+            );
+          })}
         </tr>
       </thead>
       <tbody>
@@ -63,6 +77,9 @@ export default function Table<T>({ columns, rows, rowKey, onRowClick, sortable }
             key={rowKey(row)}
             className={onRowClick ? styles.clickable : undefined}
             onClick={() => onRowClick?.(row)}
+            tabIndex={onRowClick ? 0 : undefined}
+            role={onRowClick ? "button" : undefined}
+            onKeyDown={onRowClick ? (e) => handleRowKeyDown(e, row) : undefined}
           >
             {columns.map((col) => (
               <td key={col.key} className={col.align === "right" ? styles.right : undefined} data-label={col.header}>

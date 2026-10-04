@@ -12,6 +12,7 @@ export default function DuoModeToggle() {
         type="button"
         className={duoMode === "GERANTE" ? `${styles.btn} ${styles.btnActive}` : styles.btn}
         onClick={() => setDuoMode("GERANTE")}
+        aria-pressed={duoMode === "GERANTE"}
       >
         Gérante
       </button>
@@ -19,6 +20,7 @@ export default function DuoModeToggle() {
         type="button"
         className={duoMode === "CREATRICE" ? `${styles.btn} ${styles.btnActive}` : styles.btn}
         onClick={() => setDuoMode("CREATRICE")}
+        aria-pressed={duoMode === "CREATRICE"}
       >
         Créatrice
       </button>
