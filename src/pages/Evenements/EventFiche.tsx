@@ -78,11 +78,12 @@ export default function EventFiche() {
     enabled: !!evenementId,
   });
 
-  const { data: recentVentes = [] } = useQuery<Vente[]>({
+  const { data: ventesRes } = useQuery({
     queryKey: ["ventes", "fiche", evenementId],
     queryFn: () => venteService.getAll({ evenementId, mode: "CREATRICE" }),
     enabled: !!evenementId,
   });
+  const recentVentes: Vente[] = ventesRes?.data ?? [];
 
   const { mutate: removeArticle, isPending: deleting } = useMutation({
     mutationFn: (id: string) => articleService.remove(id),

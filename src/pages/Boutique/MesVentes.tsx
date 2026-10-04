@@ -36,11 +36,15 @@ export default function MesVentes() {
   const navigate = useNavigate();
   const nomBoutique = searchParams.get("nom") ?? "Boutique";
 
-  const { data: ventes, isLoading } = useQuery<Vente[]>({
+  const { data: res, isLoading } = useQuery({
+    // take élevé : vue bornée à une seule boutique, pas de filtre/pagination
+    // ici (juste une lecture perso) — la pagination par défaut (20) serait
+    // une perte de données silencieuse pour cette vue.
     queryKey: ["mes-ventes-boutique", boutiqueId],
-    queryFn: () => venteService.getAll({ boutiqueId }),
+    queryFn: () => venteService.getAll({ boutiqueId, take: 200 }),
     enabled: !!boutiqueId,
   });
+  const ventes = res?.data;
 
   const count = ventes?.length ?? 0;
   const ca = (ventes ?? []).reduce((acc, v) => acc + v.prixVente, 0);

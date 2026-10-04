@@ -10,7 +10,7 @@
 
 import axios from "axios";
 import { useAuthStore } from "@/stores/auth.store";
-import type { User, Role, ModePaiement } from "@/types";
+import type { User, Role, ModePaiement, VenteListResponse } from "@/types";
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 
@@ -154,8 +154,18 @@ export const venteService = {
     });
     return data;
   },
-  getAll: async (filters?: { creatriceId?: string; modePaiement?: string; evenementId?: string; boutiqueId?: string; mode?: "GERANTE" | "CREATRICE" }) => {
-    const { data } = await api.get("/vente", { params: filters });
+  getAll: async (filters?: {
+    creatriceId?: string;
+    modePaiement?: string;
+    evenementId?: string;
+    boutiqueId?: string;
+    mode?: "GERANTE" | "CREATRICE";
+    dateDebut?: string;
+    dateFin?: string;
+    skip?: number;
+    take?: number;
+  }) => {
+    const { data } = await api.get<VenteListResponse>("/vente", { params: filters });
     return data;
   },
   create: async (dto: {

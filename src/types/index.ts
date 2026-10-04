@@ -53,6 +53,12 @@ export interface Vente {
   sansCommission?: boolean;
 }
 
+export interface VenteListResponse {
+  data: Vente[];
+  total: number;
+  hasMore: boolean;
+}
+
 export interface Boutique {
   id: string;
   nom: string;
