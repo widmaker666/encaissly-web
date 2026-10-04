@@ -286,3 +286,14 @@
 .contactBtn:hover {
   border-color: var(--color-text);
 }
+
+.cgvHint {
+  margin: 0;
+  font-size: var(--size-xs);
+  color: var(--color-text-light);
+  text-align: center;
+}
+
+.cgvHint a {
+  color: var(--color-primary);
+}

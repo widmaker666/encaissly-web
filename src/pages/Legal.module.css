@@ -1,56 +1,125 @@
 .page {
   min-height: 100%;
+  background: var(--color-background);
 }
 
+/* Header crème — même DA que le reste du site */
 .header {
-  background: var(--color-primary);
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
+  gap: var(--space-3);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-5) 0;
 }
 
 .backBtn {
-  background: none;
-  border: none;
-  color: white;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
-  padding: 4px 8px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: var(--size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .headerTitle {
-  color: white;
-  font-size: var(--size-md);
-  letter-spacing: 0.02em;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .content {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) var(--space-9);
+  padding: var(--space-4) var(--space-5) var(--space-9);
 }
 
 .lastUpdate {
   color: var(--color-text-light);
   font-size: var(--size-xs);
-  margin-bottom: var(--space-5);
+  margin: 0 0 var(--space-5);
 }
 
-.section {
+.toc {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.tocTitle {
+  margin: 0 0 var(--space-2);
+  font-weight: 700;
+  font-size: var(--size-sm);
+}
+
+.toc ol {
+  margin: 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--size-sm);
+}
+
+.toc a {
+  color: var(--color-primary);
+}
+
+.part {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
   margin-bottom: var(--space-5);
+  scroll-margin-top: var(--space-4);
+}
+
+.partTitle {
+  margin: 0 0 var(--space-3);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.partIntro {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  line-height: 1.6;
+}
+
+.section + .section {
+  margin-top: var(--space-4);
 }
 
 .sectionTitle {
   font-size: var(--size-sm);
+  font-weight: 700;
   margin: 0 0 6px;
+  color: var(--color-text);
 }
 
 .sectionBody {
   color: var(--color-text-light);
   font-size: var(--size-sm);
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: pre-line;
   margin: 0;
 }

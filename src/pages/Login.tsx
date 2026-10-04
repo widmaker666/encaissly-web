@@ -133,6 +133,9 @@ export default function Login() {
         <p className={styles.footer}>
           Pas de compte ? <Link to="/register">S'inscrire</Link>
         </p>
+        <p className={styles.footer}>
+          <Link to="/legal">Mentions légales · CGU · CGV · Confidentialité</Link>
+        </p>
       </div>
     </div>
   );

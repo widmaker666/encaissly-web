@@ -52,6 +52,7 @@ export default function Profil() {
   // Paiement Stripe pas encore ouvert (phase de test) : le bouton affiche un message
   const [paiementInfo, setPaiementInfo] = useState(false);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
+  const [cancelInfo, setCancelInfo] = useState<string | null>(null);
   const [deleteStep, setDeleteStep] = useState<"none" | "first" | "second">("none");
   const [creatingEvent, setCreatingEvent] = useState(false);
   const [nomEvenement, setNomEvenement] = useState("");
@@ -126,7 +127,10 @@ export default function Profil() {
 
   const { mutate: cancelPlan, isPending: isCancelling } = useMutation({
     mutationFn: () => stripeService.cancelSubscription(),
-    onSuccess: async () => setUser(await authService.getProfile()),
+    onSuccess: async ({ endsAt }) => {
+      setCancelInfo(endsAt ? `Résiliation enregistrée : ton abonnement reste actif jusqu'au ${new Date(endsAt).toLocaleDateString("fr-FR")}, puis tu repasseras en plan FREE.` : "Résiliation enregistrée : ton abonnement reste actif jusqu'à la fin de la période payée.");
+      setUser(await authService.getProfile());
+    },
     onError: () => setError("Impossible de résilier l'abonnement."),
   });
 
@@ -219,6 +223,7 @@ export default function Profil() {
       </Card>
 
       {error && <Banner variant="error">{error}</Banner>}
+      {cancelInfo && <Banner variant="success">{cancelInfo}</Banner>}
 
       {!gerante && (
         <section className={styles.section}>
@@ -415,6 +420,10 @@ export default function Profil() {
               <Button fullWidth style={{ background: "#eb7f45" }} onClick={() => (PAIEMENT_ACTIF ? upgradeDuo() : setPaiementInfo(true))} disabled={isUpgradingDuo}>
                 {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 129€/an" : "Passer en DUO — 15€/mois"}
               </Button>
+              <p className={styles.cgvHint}>
+                Sans engagement, résiliable à tout moment. En vous abonnant, vous acceptez les{" "}
+                <a href="/legal#cgv" target="_blank" rel="noreferrer">CGV</a>.
+              </p>
               {paiementInfo && <Notice>{PAIEMENT_MSG}</Notice>}
             </div>
           ) : (
@@ -441,6 +450,10 @@ export default function Profil() {
               <Button fullWidth onClick={() => (PAIEMENT_ACTIF ? upgradePro() : setPaiementInfo(true))} disabled={isUpgradingPro}>
                 ⭐ {isUpgradingPro ? "Ouverture…" : billingPeriod === "annual" ? "Passer à PRO — 79€/an" : "Passer à PRO — 9€/mois"}
               </Button>
+              <p className={styles.cgvHint}>
+                Sans engagement, résiliable à tout moment. En vous abonnant, vous acceptez les{" "}
+                <a href="/legal#cgv" target="_blank" rel="noreferrer">CGV</a>.
+              </p>
               {paiementInfo && <Notice>{PAIEMENT_MSG}</Notice>}
             </div>
           )}
@@ -466,7 +479,7 @@ export default function Profil() {
             📖 Guide complet
           </Button>
           <a className={styles.legalLink} href="/legal" target="_blank" rel="noreferrer">
-            📄 CGU &amp; Politique de confidentialité
+            📄 Informations légales (CGU, CGV, confidentialité)
           </a>
         </Card>
       </section>
@@ -489,7 +502,7 @@ export default function Profil() {
       <ConfirmDialog
         open={confirmCancelOpen}
         title="Résilier l'abonnement"
-        message="Tu vas repasser en plan FREE. Tu perdras l'accès aux fonctionnalités PRO immédiatement. Continuer ?"
+        message="Ton abonnement restera actif jusqu'à la fin de la période déjà payée (pas de remboursement au prorata), puis tu repasseras en plan FREE. Continuer ?"
         confirmLabel="Résilier"
         danger
         pending={isCancelling}
