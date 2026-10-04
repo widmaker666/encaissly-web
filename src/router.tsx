@@ -15,6 +15,7 @@ import Articles from "@/pages/Articles/Articles";
 import EventFiche from "@/pages/Evenements/EventFiche";
 import Notifications from "@/pages/Notifications/Notifications";
 import Aide from "@/pages/Aide/Aide";
+import MesVentes from "@/pages/Boutique/MesVentes";
 
 /** Les routes `(app)` du mobile — redirige vers /login si pas de session. */
 function RequireAuth() {
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
           { path: "/evenements/:id", element: <EventFiche /> },
           { path: "/notifications", element: <Notifications /> },
           { path: "/aide", element: <Aide /> },
+          { path: "/mes-ventes/:boutiqueId", element: <MesVentes /> },
           { path: "/stats", element: <Stats /> },
           { path: "/profil", element: <Profil /> },
           { path: "/boutiques/:id", element: <BoutiqueDetail /> },

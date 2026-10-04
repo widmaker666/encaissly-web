@@ -1,0 +1,97 @@
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-family: var(--font-medium);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin: -4px 0 20px;
+}
+
+.notice {
+  color: var(--color-text-light);
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 480px;
+}
+
+.table {
+  width: 100%;
+  max-width: 640px;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table th {
+  text-align: left;
+  font-family: var(--font-bold);
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-light);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--size-sm);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.badgeEspeces,
+.badgeCarte {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: var(--font-bold);
+  font-size: 11px;
+}
+
+.badgeEspeces {
+  background: #e0f7ef;
+  color: #00b894;
+}
+
+.badgeCarte {
+  background: #e0edff;
+  color: #4267b2;
+}
+
+@media (max-width: 600px) {
+  .table thead {
+    display: none;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+
+  .table td {
+    border: none;
+    padding: 2px 0;
+  }
+}

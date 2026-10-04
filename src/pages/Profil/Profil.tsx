@@ -216,10 +216,10 @@ export default function Profil() {
                 {mesBoutiques.map((b, i) => (
                   <div key={b.id}>
                     {i > 0 && <div className={styles.divider} />}
-                    <div className={styles.infoRow}>
-                      <span className={styles.infoLabel}>Membre de</span>
-                      <span className={styles.infoValue}>{b.nom}</span>
-                    </div>
+                    <button type="button" className={styles.eventRow} onClick={() => navigate(`/mes-ventes/${b.id}?nom=${encodeURIComponent(b.nom)}`)}>
+                      <span>Membre de {b.nom}</span>
+                      <span>›</span>
+                    </button>
                   </div>
                 ))}
               </>

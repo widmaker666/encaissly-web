@@ -142,9 +142,15 @@ export default function Dashboard() {
             <h3 className={styles.sectionTitle}>Mes boutiques ({boutiquesMembre.length})</h3>
             <div className={styles.boutiquesGrid}>
               {boutiquesMembre.map((b) => (
-                <div key={b.id} className={styles.boutiqueCardStatic}>
+                <button
+                  key={b.id}
+                  type="button"
+                  className={styles.boutiqueCard}
+                  onClick={() => navigate(`/mes-ventes/${b.id}?nom=${encodeURIComponent(b.nom)}`)}
+                >
                   <div className={styles.boutiqueNom}>{b.nom}</div>
-                </div>
+                  <div className={styles.boutiqueMeta}>Voir mes ventes ›</div>
+                </button>
               ))}
             </div>
           </>
