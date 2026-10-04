@@ -10,6 +10,7 @@ export const EDITEUR = {
   siret: "980 542 377 00034",
   adresse: "425 cours Émile Zola, 69100 Villeurbanne, France",
   email: "contact.encaissly@gmail.com",
+  telephone: "06 33 03 87 88",
 };
 
 export interface LegalSection {
@@ -31,7 +32,7 @@ export const LEGAL_PARTS: LegalPart[] = [
     sections: [
       {
         title: "Éditeur",
-        body: `Le site encaissly-web.vercel.app et l'application mobile Encaissly sont édités par :\n${EDITEUR.nom}\n${EDITEUR.statut}\nSIRET : ${EDITEUR.siret}\nAdresse : ${EDITEUR.adresse}\nEmail : ${EDITEUR.email}\nTVA non applicable, article 293 B du Code général des impôts.\n\nDirecteur de la publication : ${EDITEUR.nom}.`,
+        body: `Le site encaissly-web.vercel.app et l'application mobile Encaissly sont édités par :\n${EDITEUR.nom}\n${EDITEUR.statut}\nSIRET : ${EDITEUR.siret}\nAdresse : ${EDITEUR.adresse}\nEmail : ${EDITEUR.email}\nTéléphone : ${EDITEUR.telephone}\nTVA non applicable, article 293 B du Code général des impôts.\n\nDirecteur de la publication : ${EDITEUR.nom}.`,
       },
       {
         title: "Hébergement",
