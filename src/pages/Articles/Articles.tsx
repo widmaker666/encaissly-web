@@ -6,6 +6,11 @@ import { formatMontant } from "@/lib/money";
 import { getErrorMessage } from "@/lib/errors";
 import type { Article } from "@/types";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Button from "@/components/Button";
+import Card from "@/components/Card";
+import Badge from "@/components/Badge";
+import Banner from "@/components/Banner";
+import Notice from "@/components/Notice";
 import ArticleFormModal from "./ArticleFormModal";
 import styles from "./Articles.module.css";
 
@@ -66,51 +71,48 @@ export default function Articles() {
   }
 
   return (
-    <div>
-      <button type="button" className={styles.backBtn} onClick={() => navigate(`/creatrices/${creatriceId}`)}>
+    <div className={styles.page}>
+      <Button variant="link" onClick={() => navigate(`/creatrices/${creatriceId}`)}>
         ‹ Fiche créatrice
-      </button>
+      </Button>
 
       <div className={styles.header}>
         <div>
-          <h2>Articles</h2>
+          <h1 className={styles.title}>Articles</h1>
           {nomCreatrice && <p className={styles.subtitle}>{nomCreatrice}</p>}
         </div>
         <div className={styles.headerActions}>
-          <button type="button" className={styles.importBtn} onClick={() => importInputRef.current?.click()} disabled={importing}>
+          <Button variant="secondary" onClick={() => importInputRef.current?.click()} disabled={importing}>
             {importing ? "Import…" : "📥 Importer"}
-          </button>
+          </Button>
           <input ref={importInputRef} type="file" accept=".csv,.xlsx,.xls" className={styles.hiddenInput} onChange={handleImportChange} />
-          <button
-            type="button"
-            className={styles.addBtn}
+          <Button
             onClick={() => {
               setEditing(null);
               setFormOpen(true);
             }}
           >
             + Nouvel article
-          </button>
+          </Button>
         </div>
       </div>
 
-      {importMessage && <p className={styles.successBanner}>✓ {importMessage}</p>}
-      {importError && <p className={styles.errorBanner}>{importError}</p>}
+      {importMessage && <Banner variant="success">✓ {importMessage}</Banner>}
+      {importError && <Banner variant="error">{importError}</Banner>}
 
       {isLoading ? (
-        <p className={styles.notice}>Chargement…</p>
+        <Notice>Chargement…</Notice>
       ) : articles.length === 0 ? (
-        <p className={styles.notice}>Aucun article pour l'instant.</p>
+        <Notice>Aucun article pour l'instant.</Notice>
       ) : (
         <div className={styles.grid}>
           {articles.map((article) => (
-            <div key={article.id} className={styles.card}>
+            <Card key={article.id} padding="sm">
               <div className={styles.cardTop}>
                 <span className={styles.nom}>{article.nom}</span>
                 <div className={styles.cardActions}>
-                  <button
-                    type="button"
-                    className={styles.iconBtn}
+                  <Button
+                    variant="icon"
                     onClick={() => {
                       setEditing(article);
                       setFormOpen(true);
@@ -118,18 +120,18 @@ export default function Articles() {
                     aria-label="Modifier"
                   >
                     ✎
-                  </button>
-                  <button type="button" className={styles.iconBtnDanger} onClick={() => setToDelete(article)} aria-label="Supprimer">
+                  </Button>
+                  <Button variant="icon" style={{ color: "var(--color-error)" }} onClick={() => setToDelete(article)} aria-label="Supprimer">
                     ×
-                  </button>
+                  </Button>
                 </div>
               </div>
               {article.description && <p className={styles.description}>{article.description}</p>}
               <div className={styles.cardBottom}>
-                {article.prixIndicatif != null && <span className={styles.prixBadge}>{formatMontant(article.prixIndicatif)}</span>}
+                {article.prixIndicatif != null && <Badge color="primary">{formatMontant(article.prixIndicatif)}</Badge>}
                 {article.quantite != null && <span className={styles.stock}>Stock : {article.quantite}</span>}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

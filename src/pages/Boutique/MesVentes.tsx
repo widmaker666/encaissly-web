@@ -3,7 +3,11 @@ import { useParams, useSearchParams, useNavigate } from "react-router";
 import { venteService } from "@/services/api";
 import { formatMontant } from "@/lib/money";
 import { formatDate } from "@/lib/date";
-import type { Vente } from "@/types";
+import type { ModePaiement, Vente } from "@/types";
+import Button from "@/components/Button";
+import Badge from "@/components/Badge";
+import Notice from "@/components/Notice";
+import Table, { type Column } from "@/components/Table";
 import styles from "./MesVentes.module.css";
 
 // Port de encaissly-mobile/pages/Boutique/MesVentes.tsx — vue en LECTURE
@@ -13,6 +17,18 @@ import styles from "./MesVentes.module.css";
 //
 // Ownership scopé par boutiqueId + sa propre fiche créatrice côté backend,
 // indépendamment du rôle/mode DUO — pas besoin de passer `mode` ici.
+
+const paiementColor: Record<ModePaiement, "info" | "warning"> = {
+  CARTE: "info",
+  ESPECES: "warning",
+};
+
+const columns: Column<Vente>[] = [
+  { key: "article", header: "Article", render: (v) => `${v.nomArticle}${(v.quantite ?? 1) > 1 ? ` × ${v.quantite}` : ""}` },
+  { key: "date", header: "Date", render: (v) => formatDate(v.createdAt) },
+  { key: "prix", header: "Prix", render: (v) => formatMontant(v.prixVente) },
+  { key: "mode", header: "Paiement", render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge> },
+];
 
 export default function MesVentes() {
   const { boutiqueId = "" } = useParams<{ boutiqueId: string }>();
@@ -30,46 +46,24 @@ export default function MesVentes() {
   const ca = (ventes ?? []).reduce((acc, v) => acc + v.prixVente, 0);
 
   return (
-    <div>
-      <button type="button" className={styles.backBtn} onClick={() => navigate("/")}>
+    <div className={styles.page}>
+      <Button variant="link" onClick={() => navigate("/")}>
         ‹ Tableau de bord
-      </button>
+      </Button>
 
-      <h2>{nomBoutique}</h2>
-      <p className={styles.subtitle}>
-        {count} vente{count > 1 ? "s" : ""} · {formatMontant(ca)}
-      </p>
+      <div>
+        <h1 className={styles.title}>{nomBoutique}</h1>
+        <p className={styles.subtitle}>
+          {count} vente{count > 1 ? "s" : ""} · {formatMontant(ca)}
+        </p>
+      </div>
 
       {isLoading ? (
-        <p className={styles.notice}>Chargement…</p>
+        <Notice>Chargement…</Notice>
       ) : count === 0 ? (
-        <p className={styles.notice}>Aucune vente ici pour l'instant — tes ventes enregistrées dans cette boutique apparaîtront ici.</p>
+        <Notice>Aucune vente ici pour l'instant — tes ventes enregistrées dans cette boutique apparaîtront ici.</Notice>
       ) : (
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Article</th>
-              <th>Date</th>
-              <th>Prix</th>
-              <th>Paiement</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ventes!.map((v) => (
-              <tr key={v.id}>
-                <td>
-                  {v.nomArticle}
-                  {(v.quantite ?? 1) > 1 ? ` × ${v.quantite}` : ""}
-                </td>
-                <td>{formatDate(v.createdAt)}</td>
-                <td>{formatMontant(v.prixVente)}</td>
-                <td>
-                  <span className={v.modePaiement === "ESPECES" ? styles.badgeEspeces : styles.badgeCarte}>{v.modePaiement}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table columns={columns} rows={ventes ?? []} rowKey={(v) => v.id} />
       )}
     </div>
   );

@@ -1,46 +1,35 @@
-.backBtn {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-family: var(--font-medium);
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 16px;
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.title {
+  font-size: var(--size-display);
 }
 
 .subtitle {
   color: var(--color-text-light);
   font-size: var(--size-sm);
-  margin: -4px 0 0;
+  margin: 2px 0 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .sectionTitle {
-  font-size: var(--size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-light);
-  margin: 24px 0 10px;
-}
-
-.notice {
-  color: var(--color-text-light);
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 16px;
-  max-width: 480px;
+  font-size: var(--size-lg);
+  margin: 0;
 }
 
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
+  gap: var(--space-4);
   max-width: 640px;
-}
-
-.statCard {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 16px;
 }
 
 .statValue {

@@ -4,6 +4,9 @@ import { statsService } from "@/services/api";
 import { formatMontant } from "@/lib/money";
 import VentesExportButtons from "@/components/VentesExportButtons";
 import RapportExportButtons from "@/components/RapportExportButtons";
+import Button from "@/components/Button";
+import Card from "@/components/Card";
+import Notice from "@/components/Notice";
 import styles from "./BoutiqueDetail.module.css";
 
 // Port de encaissly-mobile/pages/Boutique/Detail.tsx — stats de la
@@ -30,43 +33,51 @@ export default function BoutiqueDetail() {
   const netBoutique = ca - commissions;
 
   return (
-    <div>
-      <button type="button" className={styles.backBtn} onClick={() => navigate("/")}>
+    <div className={styles.page}>
+      <Button variant="link" onClick={() => navigate("/")}>
         ‹ Tableau de bord
-      </button>
+      </Button>
 
-      <h2>{nom}</h2>
-      <p className={styles.subtitle}>Fiche boutique</p>
+      <div>
+        <h1 className={styles.title}>{nom}</h1>
+        <p className={styles.subtitle}>Fiche boutique</p>
+      </div>
 
-      <h3 className={styles.sectionTitle}>Statistiques</h3>
-      {isLoading ? (
-        <p className={styles.notice}>Chargement…</p>
-      ) : (
-        <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <div className={styles.statValue}>{formatMontant(ca)}</div>
-            <div className={styles.statLabel}>Chiffre d'affaires</div>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Statistiques</h2>
+        {isLoading ? (
+          <Notice>Chargement…</Notice>
+        ) : (
+          <div className={styles.statsGrid}>
+            <Card padding="sm">
+              <div className={styles.statValue}>{formatMontant(ca)}</div>
+              <div className={styles.statLabel}>Chiffre d'affaires</div>
+            </Card>
+            <Card padding="sm">
+              <div className={styles.statValue}>{nbVentes}</div>
+              <div className={styles.statLabel}>Ventes</div>
+            </Card>
+            <Card padding="sm">
+              <div className={styles.statValue}>{formatMontant(commissions)}</div>
+              <div className={styles.statLabel}>Commissions créatrices</div>
+            </Card>
+            <Card padding="sm">
+              <div className={styles.statValue}>{formatMontant(netBoutique)}</div>
+              <div className={styles.statLabel}>Net boutique</div>
+            </Card>
           </div>
-          <div className={styles.statCard}>
-            <div className={styles.statValue}>{nbVentes}</div>
-            <div className={styles.statLabel}>Ventes</div>
-          </div>
-          <div className={styles.statCard}>
-            <div className={styles.statValue}>{formatMontant(commissions)}</div>
-            <div className={styles.statLabel}>Commissions créatrices</div>
-          </div>
-          <div className={styles.statCard}>
-            <div className={styles.statValue}>{formatMontant(netBoutique)}</div>
-            <div className={styles.statLabel}>Net boutique</div>
-          </div>
-        </div>
-      )}
+        )}
+      </section>
 
-      <h3 className={styles.sectionTitle}>Exporter les stats</h3>
-      <RapportExportButtons scope="boutique" boutiqueId={id} filenameBase={`boutique-${nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Exporter les stats</h2>
+        <RapportExportButtons scope="boutique" boutiqueId={id} filenameBase={`boutique-${nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
+      </section>
 
-      <h3 className={styles.sectionTitle}>Ventes des créatrices</h3>
-      <VentesExportButtons boutiqueId={id} filenameBase={`ventes-${nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Ventes des créatrices</h2>
+        <VentesExportButtons boutiqueId={id} filenameBase={`ventes-${nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
+      </section>
     </div>
   );
 }
