@@ -9,6 +9,7 @@ import type { CreatriceDetail as CreatriceDetailType, VenteDetail } from "@/type
 import ConfirmDialog from "@/components/ConfirmDialog";
 import VentesExportButtons from "@/components/VentesExportButtons";
 import CreatriceFormModal from "./CreatriceFormModal";
+import InviteModal from "./InviteModal";
 import styles from "./CreatriceDetail.module.css";
 
 // Regroupe les lignes identiques (même article, même mode de paiement) —
@@ -38,6 +39,7 @@ export default function CreatriceDetail() {
 
   const [editOpen, setEditOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   const { data: creatrice, isLoading } = useQuery<CreatriceDetailType>({
     queryKey: ["creatrice", id],
@@ -74,6 +76,9 @@ export default function CreatriceDetail() {
         <div className={styles.actions}>
           <button type="button" className={styles.editBtn} onClick={() => setEditOpen(true)}>
             Modifier
+          </button>
+          <button type="button" className={styles.editBtn} onClick={() => setInviteOpen(true)}>
+            Inviter
           </button>
           <button type="button" className={styles.deleteBtn} onClick={() => setConfirmDelete(true)}>
             Supprimer
@@ -149,6 +154,8 @@ export default function CreatriceDetail() {
       )}
 
       <CreatriceFormModal open={editOpen} onClose={() => setEditOpen(false)} creatrice={creatrice} />
+
+      <InviteModal open={inviteOpen} onClose={() => setInviteOpen(false)} creatriceId={creatrice.id} />
 
       <ConfirmDialog
         open={confirmDelete}
