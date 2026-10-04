@@ -419,9 +419,9 @@ export default function Profil() {
 
       <h3 className={styles.sectionTitle}>Aide</h3>
       <div className={styles.card}>
-        <p className={styles.notice} style={{ marginBottom: 12 }}>
-          Le guide complet arrive à l'étape 2 sur le web.
-        </p>
+        <button type="button" className={styles.editBtn} style={{ marginBottom: 8 }} onClick={() => navigate("/aide")}>
+          📖 Guide complet
+        </button>
         <a className={styles.legalLink} href="/legal" target="_blank" rel="noreferrer">
           📄 CGU &amp; Politique de confidentialité
         </a>
