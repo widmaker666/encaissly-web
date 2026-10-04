@@ -27,12 +27,33 @@
 }
 
 .navLink {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 10px 12px;
   border-radius: 10px;
   text-decoration: none;
   color: var(--color-text);
   font-family: var(--font-medium);
+}
+
+.badge {
+  background: #e53935;
+  color: white;
+  border-radius: 999px;
+  font-size: 10px;
+  font-family: var(--font-bold);
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  padding: 0 4px;
+}
+
+.navLinkActive .badge {
+  background: white;
+  color: var(--color-primary);
 }
 
 .navLink:hover {

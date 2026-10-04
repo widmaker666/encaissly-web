@@ -13,6 +13,7 @@ import Profil from "@/pages/Profil/Profil";
 import BoutiqueDetail from "@/pages/Boutique/BoutiqueDetail";
 import Articles from "@/pages/Articles/Articles";
 import EventFiche from "@/pages/Evenements/EventFiche";
+import Notifications from "@/pages/Notifications/Notifications";
 
 /** Les routes `(app)` du mobile — redirige vers /login si pas de session. */
 function RequireAuth() {
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
           { path: "/creatrices/:id", element: <CreatriceDetail /> },
           { path: "/creatrices/:id/articles", element: <Articles /> },
           { path: "/evenements/:id", element: <EventFiche /> },
+          { path: "/notifications", element: <Notifications /> },
           { path: "/stats", element: <Stats /> },
           { path: "/profil", element: <Profil /> },
           { path: "/boutiques/:id", element: <BoutiqueDetail /> },
