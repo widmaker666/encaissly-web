@@ -15,6 +15,10 @@ import Badge from "@/components/Badge";
 import Avatar from "@/components/Avatar";
 import Banner from "@/components/Banner";
 import Notice from "@/components/Notice";
+
+// Passer à true quand Stripe live sera activé (SIRET en cours)
+const PAIEMENT_ACTIF = false;
+const PAIEMENT_MSG = "Les abonnements ne sont pas encore disponibles : le site et l'application sont en phase de test. Ça arrive très bientôt !";
 import { fieldControl } from "@/components/Field";
 import styles from "./Profil.module.css";
 
@@ -43,6 +47,8 @@ export default function Profil() {
   const [editNom, setEditNom] = useState(user?.nom ?? "");
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
   const [error, setError] = useState<string | null>(null);
+  // Paiement Stripe pas encore ouvert (phase de test) : le bouton affiche un message
+  const [paiementInfo, setPaiementInfo] = useState(false);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [deleteStep, setDeleteStep] = useState<"none" | "first" | "second">("none");
   const [creatingEvent, setCreatingEvent] = useState(false);
@@ -404,9 +410,10 @@ export default function Profil() {
                   Annuel · 129€ 🏷️
                 </button>
               </div>
-              <Button fullWidth style={{ background: "#eb7f45" }} onClick={() => upgradeDuo()} disabled={isUpgradingDuo}>
+              <Button fullWidth style={{ background: "#eb7f45" }} onClick={() => (PAIEMENT_ACTIF ? upgradeDuo() : setPaiementInfo(true))} disabled={isUpgradingDuo}>
                 {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 129€/an" : "Passer en DUO — 15€/mois"}
               </Button>
+              {paiementInfo && <Notice>{PAIEMENT_MSG}</Notice>}
             </div>
           ) : (
             <div className={styles.freeBlock}>
@@ -429,9 +436,10 @@ export default function Profil() {
                   Annuel · 79€ 🏷️
                 </button>
               </div>
-              <Button fullWidth onClick={() => upgradePro()} disabled={isUpgradingPro}>
+              <Button fullWidth onClick={() => (PAIEMENT_ACTIF ? upgradePro() : setPaiementInfo(true))} disabled={isUpgradingPro}>
                 ⭐ {isUpgradingPro ? "Ouverture…" : billingPeriod === "annual" ? "Passer à PRO — 79€/an" : "Passer à PRO — 9€/mois"}
               </Button>
+              {paiementInfo && <Notice>{PAIEMENT_MSG}</Notice>}
             </div>
           )}
         </Card>
