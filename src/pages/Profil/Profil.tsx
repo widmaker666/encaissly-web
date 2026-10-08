@@ -7,7 +7,6 @@ import { isDuo, isGerante, isPro as checkIsPro } from "@/lib/access";
 import { formatDateLong } from "@/lib/date";
 import { getErrorMessage } from "@/lib/errors";
 import type { Boutique } from "@/types";
-import DuoModeToggle from "@/components/DuoModeToggle";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
@@ -218,7 +217,6 @@ export default function Profil() {
               </Badge>
             )}
           </div>
-          {duo && <DuoModeToggle />}
         </div>
       </Card>
 

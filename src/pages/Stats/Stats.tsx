@@ -3,9 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { boutiqueService, evenementService, statsService } from "@/services/api";
 import type { StatsParams } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { isDuo, isGerante, isPro as checkIsPro } from "@/lib/access";
+import { isGerante, isPro as checkIsPro } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
-import DuoModeToggle from "@/components/DuoModeToggle";
 import VentesExportButtons from "@/components/VentesExportButtons";
 import RapportExportButtons from "@/components/RapportExportButtons";
 import Card from "@/components/Card";
@@ -159,7 +158,6 @@ export default function Stats() {
         <p className={styles.subtitle}>
           {filter.type !== "all" ? `${filter.type === "event" ? "🎪" : "🏪"} ${filter.nom}` : pro ? periodeLabel : "Mois en cours"}
         </p>
-        {isDuo(user) && <DuoModeToggle />}
       </div>
 
       {hasPills && (

@@ -8,7 +8,6 @@ import { formatMontant } from "@/lib/money";
 import { formatDate } from "@/lib/date";
 import { getErrorMessage } from "@/lib/errors";
 import type { Boutique, ModePaiement, Vente } from "@/types";
-import DuoModeToggle from "@/components/DuoModeToggle";
 import VentesExportButtons from "@/components/VentesExportButtons";
 import Card, { CardButton } from "@/components/Card";
 import Button from "@/components/Button";
@@ -126,7 +125,6 @@ export default function Dashboard() {
       <div className={styles.page}>
         <div className={styles.header}>
           <h1 className={styles.title}>Bonjour {nomAffiche}</h1>
-          {isDuo(user) && <DuoModeToggle />}
         </div>
 
         <Card className={styles.howCard}>
@@ -214,7 +212,6 @@ export default function Dashboard() {
           <span className={styles.eyebrow}>{ROLE_LABEL[user?.role ?? ""] ?? ""}</span>
           <h1 className={styles.title}>Bonjour {nomAffiche}</h1>
         </div>
-        {isDuo(user) && <DuoModeToggle />}
         {!isDuo(user) && <Badge color={user?.plan === "FREE" ? "neutral" : "success"}>{user?.plan}</Badge>}
       </div>
 

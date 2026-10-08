@@ -3,11 +3,10 @@ import { Link } from "react-router";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { creatriceService, venteService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { isDuo, isGerante } from "@/lib/access";
+import { isGerante } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
 import { formatDate } from "@/lib/date";
 import type { Creatrice, ModePaiement, Vente } from "@/types";
-import DuoModeToggle from "@/components/DuoModeToggle";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
 import Badge from "@/components/Badge";
@@ -130,7 +129,6 @@ export default function Ventes() {
           <p className={styles.subtitle}>
             {activeEvenementNom ? `🎪 ${activeEvenementNom}` : `${total} vente${total > 1 ? "s" : ""} · ${user?.plan ?? "FREE"}`}
           </p>
-          {isDuo(user) && <DuoModeToggle />}
         </div>
         <Button
           onClick={() => canSell && setCreateOpen(true)}

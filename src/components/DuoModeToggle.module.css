@@ -21,3 +21,41 @@
   background: var(--color-surface);
   color: var(--color-primary);
 }
+
+.full {
+  display: flex;
+  width: 100%;
+}
+
+.full .btn {
+  flex: 1;
+  padding: 7px 0;
+}
+
+/* Sur le menu latéral sombre */
+.dark {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.dark .btn {
+  color: var(--color-sidebar-text);
+}
+
+.dark .btnActive {
+  background: #fff;
+  color: var(--color-primary);
+}
+
+@media (max-width: 760px) {
+  .full {
+    display: inline-flex;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .full .btn {
+    flex: none;
+    padding: 6px 14px;
+    white-space: nowrap;
+  }
+}

@@ -3,10 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import { creatriceService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { isDuo, isGerante, FREE_LIMITS } from "@/lib/access";
+import { isGerante, FREE_LIMITS } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
 import type { Creatrice } from "@/types";
-import DuoModeToggle from "@/components/DuoModeToggle";
 import Button from "@/components/Button";
 import Notice from "@/components/Notice";
 import Table, { type Column } from "@/components/Table";
@@ -58,7 +57,6 @@ export default function Creatrices() {
           <p className={styles.subtitle}>
             {count} créatrice{count > 1 ? "s" : ""} · {user?.plan ?? "FREE"}
           </p>
-          {isDuo(user) && <DuoModeToggle />}
         </div>
         <Button
           onClick={() => !atFreeLimit && setCreateOpen(true)}
