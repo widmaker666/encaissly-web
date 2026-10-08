@@ -47,6 +47,10 @@ interface TopArticleRow {
   nbVentes?: number;
 }
 
+const MOIS_LABELS = ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
+const MOIS_LONGS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+const ANNEE_MIN = 2024;
+
 const parCreatriceColumns: Column<ParCreatriceRow>[] = [
   { key: "nom", header: "Nom", render: (c) => c.nom },
   { key: "ca", header: "CA", align: "right", render: (c) => formatMontant(c.ca) },
@@ -63,6 +67,11 @@ export default function Stats() {
   const currentMode: "GERANTE" | "CREATRICE" = gerante ? "GERANTE" : "CREATRICE";
 
   const [filter, setFilter] = useState<Filter>({ type: "all" });
+  // Période du résumé : null = tous les mois, sinon "YYYY-MM". `annee` pilote la grille de mois affichée.
+  const now = new Date();
+  const [annee, setAnnee] = useState(now.getFullYear());
+  const [mois, setMois] = useState<string | null>(null);
+  const periodeLabel = mois ? `${MOIS_LONGS[Number(mois.slice(5)) - 1]} ${mois.slice(0, 4)}` : "Tous les mois";
 
   // La bascule DUO ne démonte pas la page : react-query garde en cache les
   // événements (créatrice) ou boutiques (gérante) vus juste avant, même une
@@ -85,17 +94,19 @@ export default function Stats() {
     enabled: gerante,
   });
 
+  const moisParam = mois ?? undefined;
   const statsParams: StatsParams =
     filter.type === "event"
-      ? { evenementId: filter.id, mode: currentMode }
+      ? { evenementId: filter.id, mode: currentMode, mois: moisParam }
       : filter.type === "boutique"
-        ? { boutiqueId: filter.id, mode: currentMode }
-        : { mode: currentMode };
+        ? { boutiqueId: filter.id, mode: currentMode, mois: moisParam }
+        : { mode: currentMode, mois: moisParam };
 
   const filterKey = (filter.type === "all" ? "all" : `${filter.type}:${filter.id}`) + `:${currentMode}`;
+  const periodKey = `${filterKey}:${mois ?? "tout"}`;
 
   const { data: globalData } = useQuery({
-    queryKey: ["stats-global", filterKey],
+    queryKey: ["stats-global", periodKey],
     queryFn: () => statsService.getGlobal(statsParams),
   });
 
@@ -106,13 +117,13 @@ export default function Stats() {
   });
 
   const { data: topArticlesData } = useQuery<TopArticleRow[]>({
-    queryKey: ["stats-top-articles", filterKey],
+    queryKey: ["stats-top-articles", periodKey],
     queryFn: () => statsService.getTopArticles(statsParams),
   });
 
   const { data: parCreatriceData } = useQuery<ParCreatriceRow[]>({
-    queryKey: ["stats-par-creatrice", currentMode],
-    queryFn: () => statsService.getParCreatrice(currentMode),
+    queryKey: ["stats-par-creatrice", currentMode, mois ?? "tout"],
+    queryFn: () => statsService.getParCreatrice(currentMode, moisParam),
     enabled: gerante,
   });
 
@@ -151,7 +162,7 @@ export default function Stats() {
       <div className={styles.header}>
         <h1 className={styles.title}>Stats</h1>
         <p className={styles.subtitle}>
-          {filter.type !== "all" ? `${filter.type === "event" ? "🎪" : "🏪"} ${filter.nom}` : pro ? "3 derniers mois" : "Mois en cours"}
+          {filter.type !== "all" ? `${filter.type === "event" ? "🎪" : "🏪"} ${filter.nom}` : pro ? periodeLabel : "Mois en cours"}
         </p>
         {isDuo(user) && <DuoModeToggle />}
       </div>
@@ -184,6 +195,35 @@ export default function Stats() {
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Résumé</h2>
+        {pro && (
+          <div className={styles.periode}>
+            <div className={styles.periodeRow}>
+              <Chip active={mois === null} onClick={() => setMois(null)}>
+                Tous les mois
+              </Chip>
+              <div className={styles.yearNav}>
+                <button type="button" className={styles.yearBtn} aria-label="Année précédente" disabled={annee <= ANNEE_MIN} onClick={() => setAnnee(annee - 1)}>
+                  ‹
+                </button>
+                <span className={styles.yearLabel}>{annee}</span>
+                <button type="button" className={styles.yearBtn} aria-label="Année suivante" disabled={annee >= now.getFullYear()} onClick={() => setAnnee(annee + 1)}>
+                  ›
+                </button>
+              </div>
+            </div>
+            <div className={styles.moisGrid}>
+              {MOIS_LABELS.map((label, i) => {
+                const value = `${annee}-${String(i + 1).padStart(2, "0")}`;
+                const futur = annee === now.getFullYear() && i > now.getMonth();
+                return (
+                  <Chip key={value} active={mois === value} disabled={futur} onClick={() => setMois(value)}>
+                    {label}
+                  </Chip>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <div className={styles.kpiGrid}>
           <Card padding="sm">
             <div className={styles.kpiLabel}>{gerante ? "CA boutique" : "Chiffre d'affaires"}</div>
