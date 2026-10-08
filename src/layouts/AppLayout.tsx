@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: "/", label: "Accueil" },
   { to: "/ventes", label: "Ventes" },
   { to: "/creatrices", label: "Créatrices", gerante: true },
+  { to: "/evenements", label: "Événements", creatrice: true },
   { to: "/stats", label: "Stats" },
   { to: "/profil", label: "Profil" },
 ];
@@ -23,7 +24,7 @@ export default function AppLayout() {
   const duoMode = useAuthStore((s) => s.duoMode);
   const logout = useAuthStore((s) => s.logout);
   const gerante = isGerante(user, duoMode);
-  const navItems = NAV_ITEMS.filter((item) => !item.gerante || gerante);
+  const navItems = NAV_ITEMS.filter((item) => (!item.gerante || gerante) && (!item.creatrice || !gerante));
 
   // Un compte DUO qui bascule en vue créatrice alors qu'il est sur un écran
   // réservé à la gérante (liste/fiche créatrice) retombe sur l'accueil plutôt

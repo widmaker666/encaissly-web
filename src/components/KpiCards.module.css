@@ -1,0 +1,39 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-4);
+}
+
+.label {
+  color: var(--color-text-light);
+  font-size: var(--size-xs);
+  margin-bottom: 6px;
+}
+
+.value {
+  font-family: var(--font-title);
+  font-weight: 800;
+  color: var(--color-primary);
+  font-size: var(--size-lg);
+}
+
+.valueGreen {
+  font-family: var(--font-title);
+  font-weight: 800;
+  color: var(--color-success-text);
+  font-size: var(--size-lg);
+}
+
+.up {
+  color: var(--color-success-text);
+  font-family: var(--font-medium);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.down {
+  color: var(--color-error);
+  font-family: var(--font-medium);
+  font-size: 11px;
+  margin-top: 4px;
+}

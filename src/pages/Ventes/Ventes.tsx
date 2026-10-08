@@ -141,7 +141,7 @@ export default function Ventes() {
 
       {!canSell && (
         <Notice>
-          Aucun événement actif — crée ou ouvre un événement depuis ton <Link to="/profil">profil</Link>, puis reviens ici pour vendre.
+          Aucun événement actif — crée ou active un événement dans l'onglet <Link to="/evenements">Événements</Link>, puis reviens ici pour vendre.
         </Notice>
       )}
 

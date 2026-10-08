@@ -9,6 +9,7 @@ import VentesExportButtons from "@/components/VentesExportButtons";
 import RapportExportButtons from "@/components/RapportExportButtons";
 import Card from "@/components/Card";
 import Chip from "@/components/Chip";
+import KpiCards from "@/components/KpiCards";
 import PeriodePicker, { formatPeriode } from "@/components/PeriodePicker";
 import Notice from "@/components/Notice";
 import Table, { type Column } from "@/components/Table";
@@ -129,12 +130,9 @@ export default function Stats() {
   const currentCA: number = globalData?.stats?._sum?.prixVente ?? 0;
   const nbVentes: number = globalData?.stats?._count ?? 0;
   const totalCommissions: number = globalData?.totalCommissions ?? 0;
-  const ticketMoyen = nbVentes > 0 ? currentCA / nbVentes : 0;
-  const netCreatrice = currentCA - totalCommissions;
   const creatricesActives = (parCreatriceData ?? []).filter((c) => c.nbVentes > 0).length;
 
   const previousCA: number = globalData?.previousPeriodCA ?? 0;
-  const evolution = previousCA > 0 ? ((currentCA - previousCA) / previousCA) * 100 : null;
 
   const historique = historiqueData ?? [];
   const caMax = historique.reduce((max, item) => (item.ca > max ? item.ca : max), 0);
@@ -189,30 +187,7 @@ export default function Stats() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Résumé</h2>
         {pro && <PeriodePicker value={mois} onChange={setMois} />}
-        <div className={styles.kpiGrid}>
-          <Card padding="sm">
-            <div className={styles.kpiLabel}>{gerante ? "CA boutique" : "Chiffre d'affaires"}</div>
-            <div className={styles.kpiValue}>{formatMontant(currentCA)}</div>
-            {evolution !== null && (
-              <div className={evolution >= 0 ? styles.evolutionUp : styles.evolutionDown}>
-                {evolution >= 0 ? "▲ +" : "▼ "}
-                {evolution.toFixed(1)}%
-              </div>
-            )}
-          </Card>
-          <Card padding="sm">
-            <div className={styles.kpiLabel}>{gerante ? "Créatrices actives" : "Ventes"}</div>
-            <div className={styles.kpiValue}>{gerante ? creatricesActives : nbVentes}</div>
-          </Card>
-          <Card padding="sm">
-            <div className={styles.kpiLabel}>{gerante ? "Commissions reçues" : "Net à percevoir"}</div>
-            <div className={styles.kpiValueGreen}>{formatMontant(gerante ? totalCommissions : netCreatrice)}</div>
-          </Card>
-          <Card padding="sm">
-            <div className={styles.kpiLabel}>Ticket moyen</div>
-            <div className={styles.kpiValue}>{formatMontant(ticketMoyen)}</div>
-          </Card>
-        </div>
+        <KpiCards gerante={gerante} ca={currentCA} nbVentes={nbVentes} totalCommissions={totalCommissions} previousCA={previousCA} creatricesActives={creatricesActives} />
       </section>
 
       <div className={styles.twoCol}>

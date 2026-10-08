@@ -45,7 +45,7 @@ export default function Aide() {
             }
           : {
               title: "Créer un événement",
-              body: "Dans Profil, section « Mes événements », clique sur « Créer un événement ». Donne-lui un nom (ex : Marché de Noël). En plan FREE, tu es limitée à 1 événement actif.",
+              body: "Va dans l'onglet Événements (en vue Créatrice) et clique sur « + Nouvel événement ». Donne-lui un nom (ex : Marché de Noël). En plan FREE, tu es limitée à 1 événement.",
             },
       ],
     },

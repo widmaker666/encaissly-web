@@ -1,0 +1,87 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--size-display);
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  margin: 4px 0 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--size-lg);
+  margin: var(--space-3) 0 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formRow {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.event {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.eventActive {
+  border: 2px solid var(--color-primary);
+}
+
+.eventInfo {
+  flex: 1;
+  min-width: 200px;
+}
+
+.eventName {
+  font-family: var(--font-bold);
+  font-size: var(--size-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.eventMeta {
+  color: var(--color-text-light);
+  font-size: var(--size-sm);
+  margin-top: 2px;
+}
+
+.eventActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.boutique {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}

@@ -1,12 +1,11 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { authService, boutiqueService, evenementService, stripeService, userService } from "@/services/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { authService, stripeService, userService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { isDuo, isGerante, isPro as checkIsPro } from "@/lib/access";
+import { isDuo, isGerante } from "@/lib/access";
 import { formatDateLong } from "@/lib/date";
 import { getErrorMessage } from "@/lib/errors";
-import type { Boutique } from "@/types";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
@@ -20,14 +19,7 @@ const PAIEMENT_ACTIF = false;
 const CONTACT_EMAIL = "contact.encaissly@gmail.com";
 const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Encaissly — bug ou suggestion")}`;
 const PAIEMENT_MSG = "Les abonnements ne sont pas encore disponibles : le site et l'application sont en phase de test. Ça arrive très bientôt !";
-import { fieldControl } from "@/components/Field";
 import styles from "./Profil.module.css";
-
-interface Evenement {
-  id: string;
-  nom: string;
-  dateDebut: string;
-}
 
 type BillingPeriod = "monthly" | "annual";
 
@@ -53,48 +45,7 @@ export default function Profil() {
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [cancelInfo, setCancelInfo] = useState<string | null>(null);
   const [deleteStep, setDeleteStep] = useState<"none" | "first" | "second">("none");
-  const [creatingEvent, setCreatingEvent] = useState(false);
-  const [nomEvenement, setNomEvenement] = useState("");
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  const setActiveEvenement = useAuthStore((s) => s.setActiveEvenement);
-
-  const pro = checkIsPro(user);
-
-  const { data: mesEvenements = [] } = useQuery<Evenement[]>({
-    queryKey: ["mes-evenements"],
-    queryFn: () => evenementService.getAll(),
-    enabled: !gerante,
-  });
-
-  const { data: mesBoutiques = [] } = useQuery<Boutique[]>({
-    queryKey: ["mes-boutiques"],
-    queryFn: () => boutiqueService.getMesBoutiques(),
-    enabled: !gerante,
-  });
-
-  //- DUO débloque les mêmes fonctionnalités que PRO
-  const canCreateEvent = pro || mesEvenements.length < 1;
-
-  const { mutate: creerEvenement, isPending: creatingEventPending } = useMutation({
-    mutationFn: () => evenementService.creerMonEvenement(nomEvenement.trim()),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mes-evenements"] });
-      setCreatingEvent(false);
-      setNomEvenement("");
-    },
-    onError: () => setError("Impossible de créer l'événement."),
-  });
-
-  function handleCreerEvenement(e: FormEvent) {
-    e.preventDefault();
-    if (!nomEvenement.trim()) return;
-    creerEvenement();
-  }
-
-  function handleOuvrirEvenement(ev: Evenement) {
-    setActiveEvenement(ev.id, ev.nom);
-    navigate(`/evenements/${ev.id}?nom=${encodeURIComponent(ev.nom)}`);
-  }
 
   const { mutate: saveProfile, isPending: isSaving } = useMutation({
     mutationFn: () => userService.updateProfile({ nom: editNom || undefined, prenom: editPrenom || undefined }),
@@ -222,80 +173,6 @@ export default function Profil() {
 
       {error && <Banner variant="error">{error}</Banner>}
       {cancelInfo && <Banner variant="success">{cancelInfo}</Banner>}
-
-      {!gerante && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Mes événements</h2>
-          <Card>
-            {mesEvenements.map((ev, i) => (
-              <div key={ev.id}>
-                {i > 0 && <div className={styles.divider} />}
-                <button type="button" className={styles.eventRow} onClick={() => handleOuvrirEvenement(ev)}>
-                  <span>🎪 {ev.nom}</span>
-                  <span className={styles.infoValue}>{new Date(ev.dateDebut).toLocaleDateString("fr-FR", { month: "short", year: "numeric" })}</span>
-                </button>
-              </div>
-            ))}
-
-            {mesBoutiques.length > 0 && (
-              <>
-                {mesEvenements.length > 0 && <div className={styles.divider} />}
-                {mesBoutiques.map((b, i) => (
-                  <div key={b.id}>
-                    {i > 0 && <div className={styles.divider} />}
-                    <button type="button" className={styles.eventRow} onClick={() => navigate(`/mes-ventes/${b.id}?nom=${encodeURIComponent(b.nom)}`)}>
-                      <span>Membre de {b.nom}</span>
-                      <span>›</span>
-                    </button>
-                  </div>
-                ))}
-              </>
-            )}
-
-            {(mesEvenements.length > 0 || mesBoutiques.length > 0) && <div className={styles.divider} />}
-
-            {canCreateEvent ? (
-              creatingEvent ? (
-                <form onSubmit={handleCreerEvenement} className={styles.inlineForm}>
-                  <label className={styles.infoLabel} htmlFor="nomEvenement">
-                    Nom de l'événement
-                  </label>
-                  <input
-                    id="nomEvenement"
-                    className={fieldControl}
-                    value={nomEvenement}
-                    onChange={(e) => setNomEvenement(e.target.value)}
-                    placeholder="Ex : Marché de Noël 2026"
-                    autoFocus
-                  />
-                  <div className={styles.editActions}>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      fullWidth
-                      onClick={() => {
-                        setCreatingEvent(false);
-                        setNomEvenement("");
-                      }}
-                    >
-                      Annuler
-                    </Button>
-                    <Button type="submit" fullWidth disabled={!nomEvenement.trim() || creatingEventPending}>
-                      {creatingEventPending ? "…" : "Créer"}
-                    </Button>
-                  </div>
-                </form>
-              ) : (
-                <Button variant="secondary" fullWidth onClick={() => setCreatingEvent(true)}>
-                  + Créer un événement
-                </Button>
-              )
-            ) : (
-              <Notice>🔒 Plan FREE · 1 événement max. Passe à PRO pour en créer davantage.</Notice>
-            )}
-          </Card>
-        </section>
-      )}
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Mon compte</h2>

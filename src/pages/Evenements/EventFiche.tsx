@@ -122,7 +122,7 @@ export default function EventFiche() {
 
   function handleQuitter() {
     setActiveEvenement(null, null);
-    navigate("/profil");
+    navigate("/evenements");
   }
 
   const { mutate: removeEvenement, isPending: deletingEvent } = useMutation({
@@ -130,7 +130,7 @@ export default function EventFiche() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mes-evenements"] });
       setActiveEvenement(null, null);
-      navigate("/profil");
+      navigate("/evenements");
     },
     onError: (err) => {
       setDeleteEventError(getErrorMessage(err, "Impossible de supprimer l'événement."));

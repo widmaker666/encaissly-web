@@ -42,6 +42,7 @@ export const router = createBrowserRouter([
           { path: "/creatrices", lazy: page(() => import("@/pages/Creatrices/Creatrices")) },
           { path: "/creatrices/:id", lazy: page(() => import("@/pages/Creatrices/CreatriceDetail")) },
           { path: "/creatrices/:id/articles", lazy: page(() => import("@/pages/Articles/Articles")) },
+          { path: "/evenements", lazy: page(() => import("@/pages/Evenements/Evenements")) },
           { path: "/evenements/:id", lazy: page(() => import("@/pages/Evenements/EventFiche")) },
           { path: "/notifications", lazy: page(() => import("@/pages/Notifications/Notifications")) },
           { path: "/aide", lazy: page(() => import("@/pages/Aide/Aide")) },
