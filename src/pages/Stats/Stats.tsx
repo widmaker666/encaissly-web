@@ -10,6 +10,7 @@ import VentesExportButtons from "@/components/VentesExportButtons";
 import RapportExportButtons from "@/components/RapportExportButtons";
 import Card from "@/components/Card";
 import Chip from "@/components/Chip";
+import PeriodePicker, { formatPeriode } from "@/components/PeriodePicker";
 import Notice from "@/components/Notice";
 import Table, { type Column } from "@/components/Table";
 import styles from "./Stats.module.css";
@@ -47,10 +48,6 @@ interface TopArticleRow {
   nbVentes?: number;
 }
 
-const MOIS_LABELS = ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
-const MOIS_LONGS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
-const ANNEE_MIN = 2024;
-
 const parCreatriceColumns: Column<ParCreatriceRow>[] = [
   { key: "nom", header: "Nom", render: (c) => c.nom },
   { key: "ca", header: "CA", align: "right", render: (c) => formatMontant(c.ca) },
@@ -67,11 +64,9 @@ export default function Stats() {
   const currentMode: "GERANTE" | "CREATRICE" = gerante ? "GERANTE" : "CREATRICE";
 
   const [filter, setFilter] = useState<Filter>({ type: "all" });
-  // Période du résumé : null = tous les mois, sinon "YYYY-MM". `annee` pilote la grille de mois affichée.
-  const now = new Date();
-  const [annee, setAnnee] = useState(now.getFullYear());
+  // Période du résumé : null = tous les mois, sinon "YYYY-MM"
   const [mois, setMois] = useState<string | null>(null);
-  const periodeLabel = mois ? `${MOIS_LONGS[Number(mois.slice(5)) - 1]} ${mois.slice(0, 4)}` : "Tous les mois";
+  const periodeLabel = formatPeriode(mois);
 
   // La bascule DUO ne démonte pas la page : react-query garde en cache les
   // événements (créatrice) ou boutiques (gérante) vus juste avant, même une
@@ -195,35 +190,7 @@ export default function Stats() {
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Résumé</h2>
-        {pro && (
-          <div className={styles.periode}>
-            <div className={styles.periodeRow}>
-              <Chip active={mois === null} onClick={() => setMois(null)}>
-                Tous les mois
-              </Chip>
-              <div className={styles.yearNav}>
-                <button type="button" className={styles.yearBtn} aria-label="Année précédente" disabled={annee <= ANNEE_MIN} onClick={() => setAnnee(annee - 1)}>
-                  ‹
-                </button>
-                <span className={styles.yearLabel}>{annee}</span>
-                <button type="button" className={styles.yearBtn} aria-label="Année suivante" disabled={annee >= now.getFullYear()} onClick={() => setAnnee(annee + 1)}>
-                  ›
-                </button>
-              </div>
-            </div>
-            <div className={styles.moisGrid}>
-              {MOIS_LABELS.map((label, i) => {
-                const value = `${annee}-${String(i + 1).padStart(2, "0")}`;
-                const futur = annee === now.getFullYear() && i > now.getMonth();
-                return (
-                  <Chip key={value} active={mois === value} disabled={futur} onClick={() => setMois(value)}>
-                    {label}
-                  </Chip>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {pro && <PeriodePicker value={mois} onChange={setMois} />}
         <div className={styles.kpiGrid}>
           <Card padding="sm">
             <div className={styles.kpiLabel}>{gerante ? "CA boutique" : "Chiffre d'affaires"}</div>

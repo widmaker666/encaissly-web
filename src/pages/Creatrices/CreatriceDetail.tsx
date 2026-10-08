@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { creatriceService } from "@/services/api";
+import { useAuthStore } from "@/stores/auth.store";
+import { isPro as checkIsPro } from "@/lib/access";
 import { getErrorMessage } from "@/lib/errors";
 import { formatMontant } from "@/lib/money";
 import { formatDateLong } from "@/lib/date";
@@ -13,6 +15,7 @@ import { CardButton } from "@/components/Card";
 import Avatar from "@/components/Avatar";
 import Badge from "@/components/Badge";
 import Notice from "@/components/Notice";
+import PeriodePicker, { formatPeriode } from "@/components/PeriodePicker";
 import Table, { type Column } from "@/components/Table";
 import CreatriceFormModal from "./CreatriceFormModal";
 import InviteModal from "./InviteModal";
@@ -51,11 +54,16 @@ export default function CreatriceDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  // Période affichée (stats + ventes) : null = tous les mois, sinon "YYYY-MM" — PRO/DUO
+  const pro = checkIsPro(useAuthStore((s) => s.user));
+  const [mois, setMois] = useState<string | null>(null);
 
   const { data: creatrice, isLoading } = useQuery<CreatriceDetailType>({
-    queryKey: ["creatrice", id],
-    queryFn: () => creatriceService.getOne(id),
+    queryKey: ["creatrice", id, mois],
+    queryFn: () => creatriceService.getOne(id, mois ?? undefined),
     enabled: !!id,
+    // Garde la fiche affichée pendant le chargement d'un autre mois (sinon la page clignote)
+    placeholderData: keepPreviousData,
   });
 
   const { mutate: remove, isPending: deleting } = useMutation({
@@ -112,6 +120,13 @@ export default function CreatriceDetail() {
         </div>
       </div>
 
+      {pro && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Période</h2>
+          <PeriodePicker value={mois} onChange={setMois} />
+        </section>
+      )}
+
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <div className={styles.statValue}>{formatMontant(creatrice.stats.ca)}</div>
@@ -148,9 +163,9 @@ export default function CreatriceDetail() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Ventes ({creatrice.ventes.length})</h2>
+        <h2 className={styles.sectionTitle}>Ventes ({creatrice.ventes.length}){mois ? ` — ${formatPeriode(mois)}` : ""}</h2>
         {creatrice.ventes.length === 0 ? (
-          <Notice>Aucune vente enregistrée.</Notice>
+          <Notice>{mois ? `Aucune vente en ${formatPeriode(mois)}.` : "Aucune vente enregistrée."}</Notice>
         ) : (
           <Table columns={columns} rows={groupVentes(creatrice.ventes)} rowKey={(v) => v.id} />
         )}
