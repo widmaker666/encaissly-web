@@ -108,7 +108,10 @@ export default function AppLayout() {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
-          <p className={styles.logo}>Encaissly</p>
+          <div className={styles.brand}>
+            <img src="/icon-192.png" alt="" width={34} height={34} className={styles.brandIcon} />
+            <p className={styles.logo}>Encaissly</p>
+          </div>
 
           {/* Un seul sélecteur de vue pour tout le site (avant : répété en haut de chaque page) */}
           {isDuo(user) && <DuoModeToggle variant="dark" fullWidth />}

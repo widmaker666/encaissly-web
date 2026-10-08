@@ -19,6 +19,22 @@
   gap: 44px;
 }
 
+/* Icône + nom : alignés avec les entrées du menu (même retrait de 12 px) */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+}
+
+.brandIcon {
+  display: block;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+
 .logo {
   color: #fff;
   margin: 0;
@@ -26,7 +42,6 @@
   font-family: var(--font-title);
   font-weight: 800;
   letter-spacing: -0.02em;
-  padding: 0 12px;
 }
 
 .nav {
@@ -219,9 +234,19 @@
     min-width: 0;
   }
 
+  .brand {
+    padding: 0;
+    gap: 8px;
+  }
+
+  .brandIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+  }
+
   .logo {
     font-size: var(--size-lg);
-    padding: 0;
   }
 
   .nav,
