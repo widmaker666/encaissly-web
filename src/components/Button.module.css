@@ -35,13 +35,13 @@
 
 /* Variantes */
 .primary {
-  background: var(--color-text);
+  background: var(--color-primary);
   color: white;
   border: none;
 }
 
 .primary:not(:disabled):hover {
-  background: #1c2022;
+  background: var(--color-primary-dark);
 }
 
 .secondary {
@@ -73,7 +73,7 @@
 }
 
 .danger:not(:disabled):hover {
-  background: #b32727;
+  background: var(--color-error-dark);
 }
 
 .dangerOutline {

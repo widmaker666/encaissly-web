@@ -15,6 +15,7 @@ import Badge from "@/components/Badge";
 import Banner from "@/components/Banner";
 import Notice from "@/components/Notice";
 import Table, { type Column } from "@/components/Table";
+import { MODE_LABEL } from "@/lib/paiement";
 import styles from "./EventFiche.module.css";
 
 // Port de encaissly-mobile/pages/Creatrice/EventFiche.tsx — la fiche d'un
@@ -163,7 +164,7 @@ export default function EventFiche() {
   const venteColumns: Column<Vente>[] = [
     { key: "article", header: "Article", render: (v) => `${v.nomArticle}${(v.quantite ?? 1) > 1 ? ` × ${v.quantite}` : ""}` },
     { key: "date", header: "Date", render: (v) => formatDate(v.createdAt) },
-    { key: "mode", header: "Mode", render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge> },
+    { key: "mode", header: "Mode", render: (v) => <Badge color={paiementColor[v.modePaiement]}>{MODE_LABEL[v.modePaiement]}</Badge> },
     { key: "prix", header: "Prix", align: "right", render: (v) => formatMontant(v.prixVente) },
   ];
 

@@ -49,12 +49,13 @@
   --color-primary: #7a41bb;
   --color-primary-light: #b98ae0;
   --color-primary-dark: #5a2e8a;
-  --color-background: #eaddcd;
+  --color-background: #eef1f5;
   --color-surface: #ffffff;
   --color-surface-hover: #faf8f4;
   --color-text: #2d3436;
   --color-text-light: #656b6d;
-  --color-border: #dfe6e9;
+  --color-border: #dfe4ea;
+  --color-border-strong: #c3cbd0;
   --color-success: #00b894;
   --color-error: #d63031;
   --color-warning: #fdcb6e;
@@ -63,9 +64,24 @@
   --color-success-tint: #e3f8f3;
   --color-error-tint: #fdeceb;
   --color-warning-tint: #fdf1dc;
+  --color-warning-text: #9a6a00;
   --color-info: #4267b2;
   --color-info-tint: #e0edff;
   --color-focus-ring: rgba(122, 65, 187, 0.35);
+
+  /* Teintes dérivées — remplacent les hex codés en dur dans les modules CSS */
+  --color-primary-faint: #f6f0fb;
+  --color-primary-line: #ebe3f6;
+  --color-success-text: #00816a; /* vert lisible en TEXTE (4,8:1 sur blanc) ; --color-success reste pour les aplats */
+  --color-success-solid: #1a7a4a;
+  --color-error-dark: #b32727;
+  --color-neutral-solid: #5a6163;
+  --color-duo: #b8481a; /* orange DUO, assombri pour le contraste du texte blanc (5,3:1) */
+
+  /* Menu latéral sombre */
+  --color-sidebar: #1f2527;
+  --color-sidebar-text: #aeb6b8;
+  --color-sidebar-line: rgba(255, 255, 255, 0.12);
 
   --font-title: "Urbanist", sans-serif;
   --font-thin: "Now-Thin", sans-serif;

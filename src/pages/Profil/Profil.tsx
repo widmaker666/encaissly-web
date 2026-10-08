@@ -417,7 +417,7 @@ export default function Profil() {
                   Annuel · 129€ 🏷️
                 </button>
               </div>
-              <Button fullWidth style={{ background: "#eb7f45" }} onClick={() => (PAIEMENT_ACTIF ? upgradeDuo() : setPaiementInfo(true))} disabled={isUpgradingDuo}>
+              <Button fullWidth style={{ background: "var(--color-duo)" }} onClick={() => (PAIEMENT_ACTIF ? upgradeDuo() : setPaiementInfo(true))} disabled={isUpgradingDuo}>
                 {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 129€/an" : "Passer en DUO — 15€/mois"}
               </Button>
               <p className={styles.cgvHint}>

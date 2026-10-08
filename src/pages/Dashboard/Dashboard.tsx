@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { boutiqueService, evenementService, venteService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
@@ -17,6 +17,7 @@ import Notice from "@/components/Notice";
 import Avatar from "@/components/Avatar";
 import Table, { type Column } from "@/components/Table";
 import { InputField } from "@/components/Field";
+import { MODE_LABEL } from "@/lib/paiement";
 import styles from "./Dashboard.module.css";
 
 interface BoutiqueAvecStats {
@@ -32,6 +33,12 @@ interface EvenementAvecVentes {
   dateDebut: string;
   ventes?: { prixVente: number }[];
 }
+
+const ROLE_LABEL: Record<string, string> = {
+  GERANTE: "Gérante",
+  CREATRICE: "Créatrice",
+  GERANTE_CREATRICE: "Compte DUO",
+};
 
 const paiementColor: Record<ModePaiement, "info" | "warning"> = {
   CARTE: "info",
@@ -49,7 +56,7 @@ function venteColumns(showCreatrice: boolean): Column<Vente>[] {
     {
       key: "mode",
       header: "Mode",
-      render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge>,
+      render: (v) => <Badge color={paiementColor[v.modePaiement]}>{MODE_LABEL[v.modePaiement]}</Badge>,
     },
     { key: "prix", header: "Prix", align: "right", render: (v) => formatMontant(v.prixVente) },
   );
@@ -146,7 +153,7 @@ export default function Dashboard() {
             <Notice>Chargement…</Notice>
           ) : evenements.length === 0 ? (
             <Notice>
-              Aucun événement — crée-en un depuis ton <a href="/profil">profil</a> pour pouvoir vendre.
+              Aucun événement — crée-en un depuis ton <Link to="/profil">profil</Link> pour pouvoir vendre.
             </Notice>
           ) : (
             <div className={styles.grid}>
@@ -204,7 +211,7 @@ export default function Dashboard() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <span className={styles.eyebrow}>{user?.role}</span>
+          <span className={styles.eyebrow}>{ROLE_LABEL[user?.role ?? ""] ?? ""}</span>
           <h1 className={styles.title}>Bonjour {nomAffiche}</h1>
         </div>
         {isDuo(user) && <DuoModeToggle />}

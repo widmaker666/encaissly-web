@@ -16,6 +16,7 @@ import Table, { type Column } from "@/components/Table";
 import { fieldControl } from "@/components/Field";
 import VenteCreateModal from "./VenteCreateModal";
 import VenteEditModal from "./VenteEditModal";
+import { MODE_LABEL } from "@/lib/paiement";
 import styles from "./Ventes.module.css";
 
 type FilterMode = "TOUT" | ModePaiement;
@@ -60,7 +61,7 @@ const columns: Column<Vente>[] = [
   {
     key: "mode",
     header: "Paiement",
-    render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge>,
+    render: (v) => <Badge color={paiementColor[v.modePaiement]}>{MODE_LABEL[v.modePaiement]}</Badge>,
     sortValue: (v) => v.modePaiement,
   },
   { key: "date", header: "Date", render: (v) => formatDate(v.createdAt), sortValue: (v) => new Date(v.createdAt).getTime() },
@@ -150,7 +151,7 @@ export default function Ventes() {
         <div className={styles.filters}>
           {(["TOUT", "ESPECES", "CARTE"] as FilterMode[]).map((f) => (
             <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>
-              {f}
+              {f === "TOUT" ? "Tout" : MODE_LABEL[f]}
             </Chip>
           ))}
         </div>
@@ -179,7 +180,7 @@ export default function Ventes() {
       {isLoading ? (
         <Notice>Chargement…</Notice>
       ) : ventes.length === 0 ? (
-        <Notice>{filter !== "TOUT" ? `Aucune vente en ${filter}` : "Aucune vente pour l'instant."}</Notice>
+        <Notice>{filter !== "TOUT" ? `Aucune vente en ${MODE_LABEL[filter]}` : "Aucune vente pour l'instant."}</Notice>
       ) : (
         <>
           <Table columns={columns} rows={ventes} rowKey={(v) => v.id} onRowClick={setEditing} sortable />

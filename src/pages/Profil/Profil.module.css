@@ -181,7 +181,7 @@
 .planTitleDuo {
   font-family: var(--font-bold);
   font-size: var(--size-md);
-  color: #eb7f45;
+  color: var(--color-duo);
 }
 
 .planDesc,
@@ -216,7 +216,7 @@
 .periodToggle {
   display: flex;
   gap: 4px;
-  background: #f0eaf8;
+  background: var(--color-primary-tint);
   border-radius: var(--radius-md);
   padding: 3px;
 }

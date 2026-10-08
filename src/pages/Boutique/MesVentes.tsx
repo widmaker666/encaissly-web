@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import Badge from "@/components/Badge";
 import Notice from "@/components/Notice";
 import Table, { type Column } from "@/components/Table";
+import { MODE_LABEL } from "@/lib/paiement";
 import styles from "./MesVentes.module.css";
 
 // Port de encaissly-mobile/pages/Boutique/MesVentes.tsx — vue en LECTURE
@@ -27,7 +28,7 @@ const columns: Column<Vente>[] = [
   { key: "article", header: "Article", render: (v) => `${v.nomArticle}${(v.quantite ?? 1) > 1 ? ` × ${v.quantite}` : ""}` },
   { key: "date", header: "Date", render: (v) => formatDate(v.createdAt) },
   { key: "prix", header: "Prix", render: (v) => formatMontant(v.prixVente) },
-  { key: "mode", header: "Paiement", render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge> },
+  { key: "mode", header: "Paiement", render: (v) => <Badge color={paiementColor[v.modePaiement]}>{MODE_LABEL[v.modePaiement]}</Badge> },
 ];
 
 export default function MesVentes() {

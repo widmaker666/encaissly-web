@@ -7,6 +7,7 @@ import { formatMontant } from "@/lib/money";
 import { getErrorMessage } from "@/lib/errors";
 import type { Article, Creatrice, ModePaiement } from "@/types";
 import Modal from "@/components/Modal";
+import { MODE_LABEL } from "@/lib/paiement";
 import styles from "./VenteCreateModal.module.css";
 
 // Sur mobile c'est un assistant en 3 étapes (créatrice → articles → récap),
@@ -276,7 +277,7 @@ export default function VenteCreateModal({ open, onClose }: { open: boolean; onC
                       if (m !== "ESPECES") setSansCommission(false);
                     }}
                   >
-                    {m}
+                    {MODE_LABEL[m]}
                   </button>
                 ))}
               </div>

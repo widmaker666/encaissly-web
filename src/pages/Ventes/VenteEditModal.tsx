@@ -5,6 +5,7 @@ import { getErrorMessage } from "@/lib/errors";
 import type { ModePaiement, Vente } from "@/types";
 import Modal from "@/components/Modal";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { MODE_LABEL } from "@/lib/paiement";
 import styles from "./VenteCreateModal.module.css";
 
 // Champs volontairement limités à ce qui peut vraiment se tromper (nom,
@@ -116,7 +117,7 @@ export default function VenteEditModal({ vente, onClose }: { vente: Vente | null
                     if (m !== "ESPECES") setSansCommission(false);
                   }}
                 >
-                  {m}
+                  {MODE_LABEL[m]}
                 </button>
               ))}
             </div>

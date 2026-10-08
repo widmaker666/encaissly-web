@@ -55,7 +55,7 @@
 
 .articleRowSelected {
   border-color: var(--color-primary);
-  background: #faf5ff;
+  background: var(--color-primary-faint);
 }
 
 .articleMain {

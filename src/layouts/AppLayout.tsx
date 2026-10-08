@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { notificationService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { isDuo, isGerante } from "@/lib/access";
+import { isGerante } from "@/lib/access";
 import styles from "./AppLayout.module.css";
 
 const NAV_ITEMS = [
@@ -43,7 +43,7 @@ export default function AppLayout() {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
-          <h1 className={styles.logo}>Encaissly</h1>
+          <p className={styles.logo}>Encaissly</p>
 
           <nav className={styles.nav}>
             {navItems.map((item) => (
@@ -69,8 +69,7 @@ export default function AppLayout() {
               <div>
                 <div className={styles.userName}>{user.prenom ?? user.email}</div>
                 <div className={styles.userPlan}>
-                  {user.plan ?? "FREE"}
-                  {isDuo(user) && " · DUO"}
+                  Plan {user.plan ?? "FREE"}
                 </div>
               </div>
             </div>

@@ -108,7 +108,7 @@ export default function InviteModal({ open, onClose, creatriceId }: Props) {
           </>
         ) : null}
 
-        {success && <p style={{ color: "#16a34a", fontSize: "var(--size-sm)", marginBottom: 12 }}>{success}</p>}
+        {success && <p style={{ color: "var(--color-success-text)", fontSize: "var(--size-sm)", marginBottom: 12 }}>{success}</p>}
         {error && <p className={styles.error}>{error}</p>}
 
         <button type="submit" className={styles.submit} disabled={!canSubmit}>

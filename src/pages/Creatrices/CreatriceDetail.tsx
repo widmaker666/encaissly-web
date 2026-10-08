@@ -19,6 +19,7 @@ import PeriodePicker, { formatPeriode } from "@/components/PeriodePicker";
 import Table, { type Column } from "@/components/Table";
 import CreatriceFormModal from "./CreatriceFormModal";
 import InviteModal from "./InviteModal";
+import { MODE_LABEL } from "@/lib/paiement";
 import styles from "./CreatriceDetail.module.css";
 
 // Regroupe les lignes identiques (même article, même mode de paiement) —
@@ -91,7 +92,7 @@ export default function CreatriceDetail() {
     {
       key: "mode",
       header: "Paiement",
-      render: (v) => <Badge color={paiementColor[v.modePaiement]}>{v.modePaiement}</Badge>,
+      render: (v) => <Badge color={paiementColor[v.modePaiement]}>{MODE_LABEL[v.modePaiement]}</Badge>,
     },
   ];
 

@@ -16,11 +16,11 @@
 }
 .soft.success {
   background: var(--color-success-tint);
-  color: #00816a;
+  color: var(--color-success-text);
 }
 .soft.warning {
   background: var(--color-warning-tint);
-  color: #9a6a00;
+  color: var(--color-warning-text);
 }
 .soft.error {
   background: var(--color-error-tint);
@@ -41,11 +41,11 @@
   color: white;
 }
 .solid.success {
-  background: #1a7a4a;
+  background: var(--color-success-solid);
   color: white;
 }
 .solid.warning {
-  background: #eb7f45;
+  background: var(--color-duo);
   color: white;
 }
 .solid.error {
@@ -57,6 +57,6 @@
   color: white;
 }
 .solid.neutral {
-  background: #666;
+  background: var(--color-neutral-solid);
   color: white;
 }
