@@ -9,7 +9,6 @@ import { formatMontant } from "@/lib/money";
 import { formatDateLong } from "@/lib/date";
 import type { CreatriceDetail as CreatriceDetailType, ModePaiement, VenteDetail } from "@/types";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import VentesExportButtons from "@/components/VentesExportButtons";
 import Button from "@/components/Button";
 import { CardButton } from "@/components/Card";
 import Avatar from "@/components/Avatar";
@@ -156,11 +155,10 @@ export default function CreatriceDetail() {
       </CardButton>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Récupérer ses ventes</h2>
-        <VentesExportButtons
-          creatriceId={creatrice.id}
-          filenameBase={`ventes-${creatrice.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-        />
+        <h2 className={styles.sectionTitle}>Documents</h2>
+        <Button variant="secondary" onClick={() => navigate(`/documents?creatriceId=${creatrice.id}`)} style={{ alignSelf: "flex-start" }}>
+          Récupérer ses ventes (PDF, Excel, CSV) →
+        </Button>
       </section>
 
       <section className={styles.section}>

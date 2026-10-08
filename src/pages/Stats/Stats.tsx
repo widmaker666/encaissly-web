@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { boutiqueService, evenementService, statsService } from "@/services/api";
 import type { StatsParams } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { isGerante, isPro as checkIsPro } from "@/lib/access";
 import { formatMontant } from "@/lib/money";
-import VentesExportButtons from "@/components/VentesExportButtons";
-import RapportExportButtons from "@/components/RapportExportButtons";
 import Card from "@/components/Card";
 import Chip from "@/components/Chip";
 import KpiCards from "@/components/KpiCards";
@@ -279,17 +278,9 @@ export default function Stats() {
         </section>
       )}
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Téléchargements</h2>
-        <RapportExportButtons scope={gerante ? "boutique" : "personal"} filenameBase={gerante ? "rapport-boutique" : "rapport"} />
-      </section>
-
-      {gerante && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Ventes des créatrices</h2>
-          <VentesExportButtons filenameBase="ventes-boutique" />
-        </section>
-      )}
+      <Link to="/documents" className={styles.docLink}>
+        Exporter ces chiffres en PDF, Excel ou CSV →
+      </Link>
     </div>
   );
 }

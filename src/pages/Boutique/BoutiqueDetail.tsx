@@ -2,8 +2,6 @@ import { useParams, useSearchParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { statsService } from "@/services/api";
 import { formatMontant } from "@/lib/money";
-import VentesExportButtons from "@/components/VentesExportButtons";
-import RapportExportButtons from "@/components/RapportExportButtons";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 import Notice from "@/components/Notice";
@@ -70,13 +68,10 @@ export default function BoutiqueDetail() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Exporter les stats</h2>
-        <RapportExportButtons scope="boutique" boutiqueId={id} filenameBase={`boutique-${nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
-      </section>
-
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Ventes des créatrices</h2>
-        <VentesExportButtons boutiqueId={id} filenameBase={`ventes-${nom.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
+        <h2 className={styles.sectionTitle}>Documents</h2>
+        <Button variant="secondary" onClick={() => navigate("/documents")} style={{ alignSelf: "flex-start" }}>
+          Exporter les ventes et le récapitulatif →
+        </Button>
       </section>
     </div>
   );

@@ -13,7 +13,8 @@ const NAV_ITEMS = [
   { to: "/creatrices", label: "Créatrices", gerante: true },
   { to: "/evenements", label: "Événements", creatrice: true },
   { to: "/stats", label: "Stats" },
-  { to: "/profil", label: "Profil" },
+  { to: "/documents", label: "Documents", separator: true },
+  { to: "/compte", label: "Compte" },
 ];
 
 /** Menu latéral + zone de contenu — équivalent des onglets du bas sur mobile. */
@@ -60,14 +61,16 @@ export default function AppLayout() {
 
           <nav className={styles.nav}>
             {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === "/"}
-                className={({ isActive }) => (isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink)}
-              >
-                {item.label}
-              </NavLink>
+              <div key={item.to} className={styles.navItem}>
+                {item.separator && <div className={styles.navSep} role="separator" />}
+                <NavLink
+                  to={item.to}
+                  end={item.to === "/"}
+                  className={({ isActive }) => (isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink)}
+                >
+                  {item.label}
+                </NavLink>
+              </div>
             ))}
           </nav>
         </div>

@@ -120,7 +120,7 @@ export default function Aide() {
       items: [
         {
           title: "Passer PRO / DUO",
-          body: "Dans Profil, section Abonnement, choisis ta formule (mensuelle ou annuelle) et valide. Le paiement est géré par Stripe.",
+          body: "Dans Compte, onglet Abonnement, choisis ta formule (mensuelle ou annuelle) et valide. Le paiement est géré par Stripe.",
         },
         {
           title: "Puis-je avoir plusieurs boutiques ?",
@@ -137,7 +137,7 @@ export default function Aide() {
           : []),
         {
           title: "Résilier mon abonnement",
-          body: "Dans Profil, section Abonnement, clique sur « Résilier l'abonnement ». Tu repasses immédiatement en plan FREE.",
+          body: "Dans Compte, onglet Abonnement, clique sur « Résilier l'abonnement ». Tu repasses immédiatement en plan FREE.",
         },
       ],
     },
@@ -145,8 +145,8 @@ export default function Aide() {
 
   return (
     <div className={styles.page}>
-      <Button variant="link" onClick={() => navigate("/profil")}>
-        ‹ Profil
+      <Button variant="link" onClick={() => navigate("/compte?onglet=aide")}>
+        ‹ Compte
       </Button>
 
       <div>

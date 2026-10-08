@@ -233,3 +233,27 @@
     gap: var(--space-6);
   }
 }
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.navSep {
+  height: 1px;
+  background: var(--color-sidebar-line);
+  margin: 10px 8px;
+}
+
+@media (max-width: 760px) {
+  .navItem {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .navSep {
+    width: 1px;
+    height: 20px;
+    margin: 0 8px;
+  }
+}

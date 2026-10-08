@@ -149,3 +149,15 @@
   color: var(--color-success-text);
   font-family: var(--font-medium);
 }
+
+.docLink {
+  align-self: flex-start;
+  color: var(--color-primary);
+  font-family: var(--font-medium);
+  text-decoration: none;
+}
+
+.docLink:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}

@@ -297,3 +297,33 @@
 .cgvHint a {
   color: var(--color-primary);
 }
+
+.tabs {
+  display: flex;
+  gap: var(--space-6);
+  border-bottom: 1.5px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: var(--space-2) 2px var(--space-3);
+  font-family: var(--font-bold);
+  font-size: var(--size-sm);
+  color: var(--color-text-light);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1.5px;
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tabActive,
+.tabActive:hover {
+  color: var(--color-text);
+  border-bottom-color: var(--color-primary);
+}

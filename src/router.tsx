@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router";
+import { createBrowserRouter, Navigate, Outlet, useLocation } from "react-router";
 import type { ComponentType } from "react";
 import { useAuthStore } from "@/stores/auth.store";
 import AppLayout from "@/layouts/AppLayout";
@@ -13,6 +13,12 @@ function RequireAuth() {
   const accessToken = useAuthStore((s) => s.accessToken);
   if (!accessToken) return <Navigate to="/login" replace />;
   return <Outlet />;
+}
+
+/** Ancienne adresse du profil : garde le paramètre d'onglet (ex. ?onglet=abonnement). */
+function RedirectProfil() {
+  const { search } = useLocation();
+  return <Navigate to={`/compte${search}`} replace />;
 }
 
 /** /login, /register — inutile de les revoir si déjà connectée. */
@@ -47,8 +53,10 @@ export const router = createBrowserRouter([
           { path: "/notifications", lazy: page(() => import("@/pages/Notifications/Notifications")) },
           { path: "/aide", lazy: page(() => import("@/pages/Aide/Aide")) },
           { path: "/mes-ventes/:boutiqueId", lazy: page(() => import("@/pages/Boutique/MesVentes")) },
+          { path: "/documents", lazy: page(() => import("@/pages/Documents/Documents")) },
           { path: "/stats", lazy: page(() => import("@/pages/Stats/Stats")) },
-          { path: "/profil", lazy: page(() => import("@/pages/Profil/Profil")) },
+          { path: "/compte", lazy: page(() => import("@/pages/Profil/Profil")) },
+          { path: "/profil", element: <RedirectProfil /> },
           { path: "/boutiques/:id", lazy: page(() => import("@/pages/Boutique/BoutiqueDetail")) },
         ],
       },

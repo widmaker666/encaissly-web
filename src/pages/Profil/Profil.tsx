@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService, stripeService, userService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
@@ -23,8 +23,17 @@ import styles from "./Profil.module.css";
 
 type BillingPeriod = "monthly" | "annual";
 
+const TABS = [
+  { key: "profil", label: "Profil" },
+  { key: "abonnement", label: "Abonnement" },
+  { key: "aide", label: "Aide & légal" },
+] as const;
+
 export default function Profil() {
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
+  const onglet = params.get("onglet");
+  const tab: (typeof TABS)[number]["key"] = TABS.some((t) => t.key === onglet) ? (onglet as (typeof TABS)[number]["key"]) : "profil";
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const duoMode = useAuthStore((s) => s.duoMode);
@@ -174,6 +183,23 @@ export default function Profil() {
       {error && <Banner variant="error">{error}</Banner>}
       {cancelInfo && <Banner variant="success">{cancelInfo}</Banner>}
 
+      <div className={styles.tabs} role="tablist" aria-label="Sections du compte">
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.key}
+            className={tab === t.key ? `${styles.tab} ${styles.tabActive}` : styles.tab}
+            onClick={() => setParams(t.key === "profil" ? {} : { onglet: t.key }, { replace: true })}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "profil" && (
+        <>
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Mon compte</h2>
         <Card>
@@ -227,7 +253,6 @@ export default function Profil() {
           )}
         </Card>
       </section>
-
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Préférences</h2>
         <Card>
@@ -245,7 +270,27 @@ export default function Profil() {
           </label>
         </Card>
       </section>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Zone sensible</h2>
+        <Card className={styles.helpCard}>
+          <Button variant="secondary" fullWidth onClick={handleLogout}>
+            Se déconnecter
+          </Button>
+          <Button
+            variant="link"
+            style={{ color: "var(--color-text-light)", textDecoration: "underline", margin: "0 auto" }}
+            onClick={() => setDeleteStep("first")}
+            disabled={isDeletingAccount}
+          >
+            {isDeletingAccount ? "Suppression en cours…" : "Supprimer mon compte"}
+          </Button>
+        </Card>
+      </section>
+        </>
+      )}
 
+      {tab === "abonnement" && (
+        <>
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Abonnement</h2>
         <Card>
@@ -334,7 +379,11 @@ export default function Profil() {
           )}
         </Card>
       </section>
+        </>
+      )}
 
+      {tab === "aide" && (
+        <>
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Un bug ? Une idée ?</h2>
         <Card className={styles.helpCard}>
@@ -346,7 +395,6 @@ export default function Profil() {
           </a>
         </Card>
       </section>
-
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Aide</h2>
         <Card className={styles.helpCard}>
@@ -358,19 +406,8 @@ export default function Profil() {
           </a>
         </Card>
       </section>
-
-      <Button variant="dangerOutline" fullWidth onClick={handleLogout}>
-        🚪 Se déconnecter
-      </Button>
-
-      <Button
-        variant="link"
-        style={{ color: "var(--color-text-light)", textDecoration: "underline", margin: "0 auto" }}
-        onClick={() => setDeleteStep("first")}
-        disabled={isDeletingAccount}
-      >
-        {isDeletingAccount ? "Suppression en cours…" : "Supprimer mon compte"}
-      </Button>
+        </>
+      )}
 
       <p className={styles.footer}>Encaissly · La caisse intelligente des boutiques de créateurs</p>
 
