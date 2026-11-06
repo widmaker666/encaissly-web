@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService, stripeService, userService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { isDuo, isGerante } from "@/lib/access";
 import { formatDateLong } from "@/lib/date";
+import { isAxiosError } from "axios";
 import { getErrorMessage } from "@/lib/errors";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Button from "@/components/Button";
@@ -14,8 +15,36 @@ import Avatar from "@/components/Avatar";
 import Banner from "@/components/Banner";
 import Notice from "@/components/Notice";
 
-// Passer à true quand Stripe live sera activé (SIRET en cours)
-const PAIEMENT_ACTIF = false;
+// Paiement Stripe : activé par la variable VITE_PAIEMENT_ACTIF=true (Vercel), au MÊME moment que les
+// VITE_STRIPE_PRICE_* « live ». Absente ou autre chose que "true" → les boutons affichent le message d'attente.
+const PAIEMENT_ACTIF = import.meta.env.VITE_PAIEMENT_ACTIF === "true";
+const MSG_PAIEMENT_ECHEC = "Impossible d'ouvrir la page de paiement. Réessaie dans un instant ; si ça persiste, écris-nous (onglet Aide & légal).";
+const MSG_TARIF_INDISPONIBLE = "Ce tarif n'est pas disponible pour le moment. Écris-nous (onglet Aide & légal), on règle ça vite.";
+const MSG_TROP_DE_TENTATIVES = "Trop de tentatives d'affilée. Patiente une minute puis réessaie.";
+
+/** Message clair pour l'échec d'une demande de paiement — jamais le message technique brut du serveur. */
+function messagePaiement(err: unknown): string {
+  if (err instanceof Error && err.message === "PRIX_INDISPONIBLE") return MSG_TARIF_INDISPONIBLE;
+  if (isAxiosError(err) && err.response) {
+    const { status, data } = err.response;
+    if (status === 429) return MSG_TROP_DE_TENTATIVES;
+    // 4xx métier du serveur (ex. « Tu as déjà un abonnement actif. ») : lisible tel quel
+    if (status >= 400 && status < 500 && typeof data?.message === "string") return data.message;
+  }
+  return MSG_PAIEMENT_ECHEC;
+}
+
+/** Ne redirige QUE vers la page de paiement officielle de Stripe (jamais vers une adresse reçue telle quelle). */
+function ouvrirPagePaiement(url: string) {
+  let hote = "";
+  try {
+    hote = new URL(url).hostname;
+  } catch {
+    // adresse illisible → refusée juste après
+  }
+  if (hote !== "checkout.stripe.com") throw new Error("URL_PAIEMENT_INVALIDE");
+  window.location.href = url;
+}
 const CONTACT_EMAIL = "contact.encaissly@gmail.com";
 const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Encaissly — bug ou suggestion")}`;
 const PAIEMENT_MSG = "Les abonnements ne sont pas encore disponibles : le site et l'application sont en phase de test. Ça arrive très bientôt !";
@@ -53,6 +82,40 @@ export default function Profil() {
   const [paiementInfo, setPaiementInfo] = useState(false);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [cancelInfo, setCancelInfo] = useState<string | null>(null);
+
+  //- Retour de Stripe (?checkout=success|cancel). Le plan est mis à jour par le webhook, quelques
+  //- secondes APRÈS le retour : on relit le profil toutes les 2 s (≈ 20 s max) jusqu'à ce que le plan change.
+  const checkout = params.get("checkout");
+  const [paiement, setPaiement] = useState<"attente" | "ok" | "tardif" | "annule" | null>(null);
+  useEffect(() => {
+    if (checkout === "cancel") {
+      setPaiement("annule");
+      return;
+    }
+    if (checkout !== "success") return;
+    setPaiement("attente");
+    const planAvant = useAuthStore.getState().user?.plan;
+    let essais = 0;
+    const minuterie = setInterval(async () => {
+      essais += 1;
+      try {
+        const profil = await authService.getProfile();
+        setUser(profil);
+        if (profil.plan !== planAvant) {
+          setPaiement("ok");
+          clearInterval(minuterie);
+          return;
+        }
+      } catch {
+        // réseau instable : on réessaie au prochain tour
+      }
+      if (essais >= 10) {
+        setPaiement("tardif");
+        clearInterval(minuterie);
+      }
+    }, 2000);
+    return () => clearInterval(minuterie);
+  }, [checkout, setUser]);
   const [deleteStep, setDeleteStep] = useState<"none" | "first" | "second">("none");
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
@@ -96,10 +159,11 @@ export default function Profil() {
   const { mutate: upgradePro, isPending: isUpgradingPro } = useMutation({
     mutationFn: async () => {
       const priceId = billingPeriod === "annual" ? import.meta.env.VITE_STRIPE_PRICE_PRO_ANNUAL : import.meta.env.VITE_STRIPE_PRICE_PRO_MONTHLY;
-      const { url } = await stripeService.createCheckoutSession(priceId ?? "");
-      window.location.href = url;
+      if (!priceId) throw new Error("PRIX_INDISPONIBLE");
+      const { url } = await stripeService.createCheckoutSession(priceId);
+      ouvrirPagePaiement(url);
     },
-    onError: () => setError("Impossible d'ouvrir la page de paiement."),
+    onError: (err) => setError(messagePaiement(err)),
   });
 
   const { mutate: upgradeDuo, isPending: isUpgradingDuo } = useMutation({
@@ -108,10 +172,11 @@ export default function Profil() {
         setUser(await stripeService.upgradeDuo());
       }
       const priceId = billingPeriod === "annual" ? import.meta.env.VITE_STRIPE_PRICE_DUO_ANNUAL : import.meta.env.VITE_STRIPE_PRICE_DUO_MONTHLY;
-      const { url } = await stripeService.createCheckoutSession(priceId ?? "");
-      window.location.href = url;
+      if (!priceId) throw new Error("PRIX_INDISPONIBLE");
+      const { url } = await stripeService.createCheckoutSession(priceId);
+      ouvrirPagePaiement(url);
     },
-    onError: () => setError("Impossible d'ouvrir la page de paiement DUO."),
+    onError: (err) => setError(messagePaiement(err)),
   });
 
   const { mutate: deleteAccount, isPending: isDeletingAccount } = useMutation({
@@ -182,6 +247,12 @@ export default function Profil() {
 
       {error && <Banner variant="error">{error}</Banner>}
       {cancelInfo && <Banner variant="success">{cancelInfo}</Banner>}
+      {paiement === "attente" && <Notice>Paiement reçu, merci ! Ton abonnement s'active dans quelques secondes…</Notice>}
+      {paiement === "ok" && <Banner variant="success">Ton abonnement est activé. Bienvenue !</Banner>}
+      {paiement === "tardif" && (
+        <Notice>Ton paiement est bien enregistré, mais l'activation prend plus de temps que prévu. Recharge la page dans une minute ; si rien ne change, écris-nous (onglet Aide &amp; légal).</Notice>
+      )}
+      {paiement === "annule" && <Notice>Paiement annulé : aucun montant n'a été débité.</Notice>}
 
       <div className={styles.tabs} role="tablist" aria-label="Sections du compte">
         {TABS.map((t) => (
@@ -334,15 +405,15 @@ export default function Profil() {
                   Mensuel · 15€
                 </button>
                 <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")} aria-pressed={billingPeriod === "annual"}>
-                  Annuel · 129€ 🏷️
+                  Annuel · 130€ 🏷️
                 </button>
               </div>
               <Button fullWidth style={{ background: "var(--color-duo)" }} onClick={() => (PAIEMENT_ACTIF ? upgradeDuo() : setPaiementInfo(true))} disabled={isUpgradingDuo}>
-                {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 129€/an" : "Passer en DUO — 15€/mois"}
+                {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 130€/an" : "Passer en DUO — 15€/mois"}
               </Button>
               <p className={styles.cgvHint}>
                 Sans engagement, résiliable à tout moment. En vous abonnant, vous acceptez les{" "}
-                <a href="/legal#cgv" target="_blank" rel="noreferrer">CGV</a>.
+                <a href="/legal#cgv" target="_blank" rel="noreferrer">CGV</a>.{PAIEMENT_ACTIF && " Paiement sécurisé par Stripe."}
               </p>
               {paiementInfo && <Notice>{PAIEMENT_MSG}</Notice>}
             </div>
@@ -372,7 +443,7 @@ export default function Profil() {
               </Button>
               <p className={styles.cgvHint}>
                 Sans engagement, résiliable à tout moment. En vous abonnant, vous acceptez les{" "}
-                <a href="/legal#cgv" target="_blank" rel="noreferrer">CGV</a>.
+                <a href="/legal#cgv" target="_blank" rel="noreferrer">CGV</a>.{PAIEMENT_ACTIF && " Paiement sécurisé par Stripe."}
               </p>
               {paiementInfo && <Notice>{PAIEMENT_MSG}</Notice>}
             </div>

@@ -2,7 +2,7 @@
 // et encaissly-mobile/constants/legal.ts : toute modification doit être reportée
 // dans les deux (puis mettre à jour LEGAL_UPDATED_AT).
 
-export const LEGAL_UPDATED_AT = "4 octobre 2026";
+export const LEGAL_UPDATED_AT = "6 novembre 2026";
 
 export const EDITEUR = {
   nom: "Alexandre Hontcharouk",
@@ -82,7 +82,7 @@ export const LEGAL_PARTS: LegalPart[] = [
     sections: [
       {
         title: "1. Offres et prix",
-        body: "• PRO : 9 € par mois ou 79 € par an\n• DUO (gérante + créatrice) : 15 € par mois ou 129 € par an\n\nPrix en euros, TVA non applicable (article 293 B du CGI). Le détail des fonctionnalités de chaque offre est affiché dans l'onglet Profil avant la souscription. Le plan FREE reste gratuit et sans engagement.",
+        body: "• PRO : 9 € par mois ou 79 € par an\n• DUO (gérante + créatrice) : 15 € par mois ou 130 € par an\n\nPrix en euros, TVA non applicable (article 293 B du CGI). Le détail des fonctionnalités de chaque offre est affiché dans l'onglet Profil avant la souscription. Le plan FREE reste gratuit et sans engagement.",
       },
       {
         title: "2. Souscription et paiement",
