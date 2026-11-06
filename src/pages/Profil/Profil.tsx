@@ -405,11 +405,11 @@ export default function Profil() {
                   Mensuel · 15€
                 </button>
                 <button type="button" className={billingPeriod === "annual" ? `${styles.periodBtn} ${styles.periodBtnActive}` : styles.periodBtn} onClick={() => setBillingPeriod("annual")} aria-pressed={billingPeriod === "annual"}>
-                  Annuel · 129€ 🏷️
+                  Annuel · 130€ 🏷️
                 </button>
               </div>
               <Button fullWidth style={{ background: "var(--color-duo)" }} onClick={() => (PAIEMENT_ACTIF ? upgradeDuo() : setPaiementInfo(true))} disabled={isUpgradingDuo}>
-                {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 129€/an" : "Passer en DUO — 15€/mois"}
+                {isUpgradingDuo ? "Ouverture…" : billingPeriod === "annual" ? "Passer en DUO — 130€/an" : "Passer en DUO — 15€/mois"}
               </Button>
               <p className={styles.cgvHint}>
                 Sans engagement, résiliable à tout moment. En vous abonnant, vous acceptez les{" "}
