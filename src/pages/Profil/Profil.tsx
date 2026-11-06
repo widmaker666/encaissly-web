@@ -150,6 +150,7 @@ export default function Profil() {
   const { mutate: cancelPlan, isPending: isCancelling } = useMutation({
     mutationFn: () => stripeService.cancelSubscription(),
     onSuccess: async ({ endsAt }) => {
+      setPaiement(null);
       setCancelInfo(endsAt ? `Résiliation enregistrée : ton abonnement reste actif jusqu'au ${new Date(endsAt).toLocaleDateString("fr-FR")}, puis tu repasseras en plan FREE.` : "Résiliation enregistrée : ton abonnement reste actif jusqu'à la fin de la période payée.");
       setUser(await authService.getProfile());
     },
@@ -373,9 +374,11 @@ export default function Profil() {
               </div>
               <p className={styles.planDesc}>Boutique + Créatrice · Multi-boutiques · Stats avancées · Historique complet</p>
               <div className={styles.divider} />
-              <Button variant="link" style={{ color: "var(--color-error)" }} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
+              {!cancelInfo && (
+                <Button variant="link" style={{ color: "var(--color-error)" }} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
                 {isCancelling ? "Résiliation en cours…" : "Résilier l'abonnement"}
               </Button>
+              )}
             </div>
           ) : isPlanPro ? (
             <div className={styles.planBlock}>
@@ -385,9 +388,11 @@ export default function Profil() {
               </div>
               <p className={styles.planDesc}>Multi-boutiques · Stats avancées · Historique complet · Exports illimités sans filigrane</p>
               <div className={styles.divider} />
-              <Button variant="link" style={{ color: "var(--color-error)" }} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
+              {!cancelInfo && (
+                <Button variant="link" style={{ color: "var(--color-error)" }} onClick={() => setConfirmCancelOpen(true)} disabled={isCancelling}>
                 {isCancelling ? "Résiliation en cours…" : "Résilier l'abonnement"}
               </Button>
+              )}
             </div>
           ) : duo ? (
             <div className={styles.freeBlock}>
