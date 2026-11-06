@@ -32,7 +32,7 @@ export const LEGAL_PARTS: LegalPart[] = [
     sections: [
       {
         title: "Éditeur",
-        body: `Le site encaissly-web.vercel.app et l'application mobile Encaissly sont édités par :\n${EDITEUR.nom}\n${EDITEUR.statut}\nSIRET : ${EDITEUR.siret}\nAdresse : ${EDITEUR.adresse}\nEmail : ${EDITEUR.email}\nTéléphone : ${EDITEUR.telephone}\nTVA non applicable, article 293 B du Code général des impôts.\n\nDirecteur de la publication : ${EDITEUR.nom}.`,
+        body: `Le site encaissly.fr et l'application mobile Encaissly sont édités par :\n${EDITEUR.nom}\n${EDITEUR.statut}\nSIRET : ${EDITEUR.siret}\nAdresse : ${EDITEUR.adresse}\nEmail : ${EDITEUR.email}\nTéléphone : ${EDITEUR.telephone}\nTVA non applicable, article 293 B du Code général des impôts.\n\nDirecteur de la publication : ${EDITEUR.nom}.`,
       },
       {
         title: "Hébergement",
