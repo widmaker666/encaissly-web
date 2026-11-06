@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { notificationService } from "@/services/api";
+import { authService, notificationService } from "@/services/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { isDuo, isGerante } from "@/lib/access";
 import DuoModeToggle from "@/components/DuoModeToggle";
@@ -53,6 +53,7 @@ export default function AppLayout() {
   const user = useAuthStore((s) => s.user);
   const duoMode = useAuthStore((s) => s.duoMode);
   const logout = useAuthStore((s) => s.logout);
+  const setUser = useAuthStore((s) => s.setUser);
   const gerante = isGerante(user, duoMode);
   const navItems = NAV_ITEMS.filter((item) => (!item.gerante || gerante) && (!item.creatrice || !gerante));
   const tabs = navItems.filter((item) => PRIMARY_PATHS.includes(item.to));
@@ -75,6 +76,19 @@ export default function AppLayout() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [moreOpen]);
+
+  // Le profil (plan, rôle…) est gardé dans le navigateur : sans relecture, un abonnement payé ailleurs,
+  // résilié ou arrivé à son terme resterait affiché tel quel jusqu'à la prochaine connexion.
+  // On le relit à l'ouverture et à chaque retour sur l'onglet (au plus une fois par minute).
+  const { data: profil } = useQuery({
+    queryKey: ["profil-courant"],
+    queryFn: authService.getProfile,
+    staleTime: 60_000,
+    refetchOnWindowFocus: true,
+  });
+  useEffect(() => {
+    if (profil && JSON.stringify(profil) !== JSON.stringify(useAuthStore.getState().user)) setUser(profil);
+  }, [profil, setUser]);
 
   // Même intervalle que le mobile (badge cloche du Dashboard) — reste à jour
   // sans que la personne ait besoin d'ouvrir la page Notifications.
